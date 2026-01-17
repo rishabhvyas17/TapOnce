@@ -3,100 +3,91 @@
  * @description Drag-and-drop order management across fulfillment pipeline
  * 
  * @owner Dev 1
- * @module admin
+ * @module admin/orders
  * 
  * @see ProductRequirementsDocument.txt Section 6.1.1 for Kanban requirements
- * 
- * COLUMNS:
- * 1. Pending Approval
- * 2. Approved
- * 3. Printing
- * 4. Printed
- * 5. Ready to Ship
- * 6. Shipped
- * 7. Delivered
- * 8. Paid
- * 
- * FEATURES:
- * - Drag orders between columns to update status
- * - Click order card to view full details modal
- * - Approve/Reject actions
- * - Wekonnect message generator
- * - Search and filters
  */
 
-'use client'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { KanbanBoard } from '@/components/admin/KanbanBoard'
+import type { OrderCard } from '@/types/kanban'
+import type { OrderStatus } from '@/types/order'
 
-import { useState } from 'react'
-import { KANBAN_STATUSES, getStatusConfig } from '@/config/order-statuses'
+async function getOrders(): Promise<OrderCard[]> {
+    const supabase = createServerSupabaseClient()
 
-export default function AdminOrdersPage() {
-    const [searchQuery, setSearchQuery] = useState('')
+    const { data, error } = await supabase
+        .from('orders')
+        .select(`
+            id,
+            order_number,
+            customer_name,
+            customer_company,
+            customer_phone,
+            customer_photo_url,
+            card_design_id,
+            sale_price,
+            commission_amount,
+            status,
+            payment_status,
+            is_direct_sale,
+            is_below_msp,
+            agent_id,
+            created_at,
+            updated_at,
+            card_designs (
+                name
+            ),
+            agents (
+                referral_code,
+                profiles (
+                    full_name
+                )
+            )
+        `)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching orders:', error)
+        return []
+    }
+
+    return (data || []).map((order: any) => ({
+        id: order.id,
+        orderNumber: order.order_number,
+        customerName: order.customer_name,
+        customerCompany: order.customer_company,
+        customerPhone: order.customer_phone,
+        customerPhotoUrl: order.customer_photo_url,
+        cardDesignName: order.card_designs?.name || 'Unknown',
+        salePrice: parseFloat(order.sale_price),
+        commissionAmount: parseFloat(order.commission_amount || 0),
+        status: order.status as OrderStatus,
+        paymentStatus: order.payment_status,
+        isDirectSale: order.is_direct_sale,
+        isBelowMsp: order.is_below_msp,
+        agentName: order.agents?.profiles?.full_name,
+        agentReferralCode: order.agents?.referral_code,
+        createdAt: order.created_at,
+        updatedAt: order.updated_at,
+        daysInStatus: calculateDaysInStatus(order.updated_at),
+    }))
+}
+
+function calculateDaysInStatus(updatedAt: string): number {
+    const updated = new Date(updatedAt)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - updated.getTime())
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+}
+
+export default async function AdminOrdersPage() {
+    const orders = await getOrders()
 
     return (
-        <div className="h-full">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Orders</h1>
-                <div className="flex gap-4">
-                    {/* Search */}
-                    <input
-                        type="text"
-                        placeholder="Search orders..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="px-4 py-2 border rounded-lg"
-                    />
-                    {/* Filters button */}
-                    <button className="px-4 py-2 border rounded-lg">
-                        Filters
-                    </button>
-                </div>
-            </div>
-
-            {/* Kanban Board */}
-            <div className="flex gap-4 overflow-x-auto pb-4">
-                {KANBAN_STATUSES.map((status) => {
-                    const config = getStatusConfig(status)
-                    return (
-                        <div
-                            key={status}
-                            className="flex-shrink-0 w-72 bg-gray-50 rounded-lg p-4"
-                        >
-                            {/* Column header */}
-                            <div className="flex items-center gap-2 mb-4">
-                                <span>{config.icon}</span>
-                                <h3 className="font-semibold">{config.label}</h3>
-                                <span className="ml-auto text-sm text-gray-500">(0)</span>
-                            </div>
-
-                            {/* Order cards placeholder */}
-                            <div className="space-y-3 min-h-[200px]">
-                                <div className="bg-white p-3 rounded-lg shadow-sm border border-dashed border-gray-200">
-                                    <p className="text-sm text-gray-400 text-center">
-                                        Drop orders here
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
-
-            {/* 
-        TODO: Implement:
-        1. Fetch orders from Supabase
-        2. Group by status
-        3. Drag-and-drop with @dnd-kit or react-beautiful-dnd
-        4. Order detail modal
-        5. Status transition validation
-        6. Wekonnect message generator
-        7. Real-time updates via Supabase Realtime
-      */}
-
-            <p className="text-center text-sm text-gray-400 mt-8">
-                Owner: Dev 1 | Module: admin/orders
-            </p>
+        <div className="h-[calc(100vh-4rem)]">
+            <KanbanBoard initialOrders={orders} />
         </div>
     )
 }

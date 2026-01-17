@@ -8,7 +8,7 @@
  * @see ProductRequirementsDocument.txt Section 6.1.1 for Kanban columns
  */
 
-import type { OrderStatus } from '@/types'
+import type { OrderStatus } from '@/types/order'
 
 export interface OrderStatusConfig {
     value: OrderStatus
@@ -149,3 +149,16 @@ export const STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 export function isValidTransition(from: OrderStatus, to: OrderStatus): boolean {
     return STATUS_TRANSITIONS[from]?.includes(to) || false
 }
+
+/**
+ * Get valid transition statuses from current status
+ */
+export function getValidTransitions(status: OrderStatus): OrderStatus[] {
+    return STATUS_TRANSITIONS[status] || []
+}
+
+/**
+ * Payment status type
+ */
+export type PaymentStatus = 'pending' | 'advance_paid' | 'paid' | 'cod'
+

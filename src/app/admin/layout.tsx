@@ -35,8 +35,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     <h2 className="text-xl font-bold text-blue-600">TapOnce</h2>
                     <p className="text-xs text-gray-500">Admin Panel</p>
                 </div>
-                <nav className="mt-4">
-                    <p className="px-4 text-sm text-gray-400">Navigation placeholder</p>
+                <nav className="mt-4 px-2 space-y-1">
+                    <a href="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                        Dashboard
+                    </a>
+                    <a href="/admin/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                        Order Board
+                    </a>
+                    <a href="/admin/agents" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                        Agents
+                    </a>
                 </nav>
             </aside>
 

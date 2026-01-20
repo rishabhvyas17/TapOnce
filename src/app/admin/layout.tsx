@@ -69,7 +69,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
             <aside
-                className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-lg flex flex-col shrink-0 sticky top-0 h-screen transition-all duration-300 z-30`}
+                className={`${isSidebarOpen ? 'w-56' : 'w-20'} bg-white shadow-lg flex flex-col shrink-0 sticky top-0 h-screen transition-all duration-300 z-30`}
             >
                 <div className={`p-4 h-16 flex items-center ${isSidebarOpen ? 'justify-start' : 'justify-center'}`}>
                     <h2 className={`text-xl font-bold text-blue-600 transition-opacity duration-200 ${!isSidebarOpen && 'hidden opacity-0'}`}>TapOnce</h2>
@@ -98,19 +98,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         )
                     })}
                 </nav>
-
-                {/* Logout Button at Bottom */}
-                <div className="p-4 border-t">
-                    <Button
-                        variant="ghost"
-                        className={`w-full ${isSidebarOpen ? 'justify-start' : 'justify-center px-0'} text-red-600 hover:text-red-700 hover:bg-red-50`}
-                        onClick={handleLogout}
-                        title={!isSidebarOpen ? "Logout" : undefined}
-                    >
-                        <LogOut className={`w-4 h-4 flex-shrink-0 ${isSidebarOpen ? 'mr-2' : ''}`} />
-                        {isSidebarOpen && <span>Logout</span>}
-                    </Button>
-                </div>
             </aside>
 
             {/* Main content */}

@@ -1,13 +1,16 @@
 import Footer from "@/components/layout/Footer"
 import Navbar from "@/components/layout/Navbar"
-import LimitedEditionCTA from "@/components/showroom/LimitedEditionCTA"
+import Advantages from "@/components/landing/Advantages"
+import ComparisonTable from "@/components/landing/ComparisonTable"
+import FinalCTA from "@/components/landing/FinalCTA"
+import HowItWorks from "@/components/landing/HowItWorks"
+import PrideSection from "@/components/landing/PrideSection"
+import TrustedBy from "@/components/landing/TrustedBy"
 import ProductCollection from "@/components/showroom/ProductCollection"
-import ROICalculator from "@/components/showroom/ROICalculator"
 import ShowroomHero from "@/components/showroom/ShowroomHero"
 import StickyMobileCTA from "@/components/showroom/StickyMobileCTA"
 import TemplateShowcase from "@/components/showroom/TemplateShowcase"
 import TestimonialsSection from "@/components/showroom/TestimonialsSection"
-import TrustedBy from "@/components/landing/TrustedBy"
 import React from "react"
 
 export default function LandingPage() {
@@ -21,20 +24,29 @@ export default function LandingPage() {
          {/* 2. Trust Signal */}
          <TrustedBy />
 
-         {/* 3. Template Showcase: Visual Gallery */}
+         {/* 3. How It Works: 3-Step Process */}
+         <HowItWorks />
+
+         {/* 4. Advantages: Why TapOnce */}
+         <Advantages />
+
+         {/* 5. Template Showcase: Visual Gallery */}
          <TemplateShowcase />
 
-         {/* 4. Product Materials */}
+         {/* 6. Product Materials */}
          <ProductCollection />
 
-         {/* 5. Social Proof */}
+         {/* 7. Comparison: Paper vs TapOnce */}
+         <ComparisonTable />
+
+         {/* 8. Social Proof */}
          <TestimonialsSection />
 
-         {/* 6. ROI: Overcome Price Objection */}
-         <ROICalculator />
+         {/* 9. Pride/FOMO Section */}
+         <PrideSection />
 
-         {/* 7. Final CTA */}
-         <LimitedEditionCTA />
+         {/* 10. Final CTA */}
+         <FinalCTA />
 
          <Footer />
 
@@ -43,3 +55,4 @@ export default function LandingPage() {
       </main>
    )
 }
+

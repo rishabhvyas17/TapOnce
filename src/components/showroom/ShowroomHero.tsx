@@ -75,10 +75,10 @@ export default function ShowroomHero() {
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md"
                     >
                         <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase">System 2.0 Live</span>
+                        <span className="text-xs font-bold tracking-widest text-emerald-400 uppercase">10,000+ Cards Delivered</span>
                     </motion.div>
 
                     <div className="space-y-2 relative">
@@ -86,11 +86,12 @@ export default function ShowroomHero() {
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mix-blend-difference"
+                            className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.95]"
                         >
-                            BEYOND<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-200 via-white to-cyan-200">
-                                REALITY
+                            Your First<br />
+                            Impression,{" "}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-purple-300 to-cyan-400">
+                                Elevated
                             </span>
                         </motion.h1>
 
@@ -105,26 +106,54 @@ export default function ShowroomHero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-xl text-zinc-400 max-w-md leading-relaxed"
+                        className="text-xl text-zinc-400 max-w-lg leading-relaxed"
                     >
-                        The first intelligent networking interface that lives in the real world. Crafted from aerospace-grade materials.
-                        <br /><br />
-                        <strong className="text-white">Hover to inspect. Click to explode.</strong>
+                        The premium NFC business card that defines your professional identity.
+                        One tap shares everything—contact, socials, portfolio. No app needed.
                     </motion.p>
 
+                    {/* Dual CTAs */}
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.6 }}
-                        className="flex gap-4"
+                        className="flex flex-wrap gap-4"
                     >
-                        <button
-                            onClick={() => setIsExploded(!isExploded)}
+                        <Link
+                            href="/login?redirect=/agent/orders/new"
                             className="group flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all active:scale-95"
                         >
+                            Design Your Card
+                            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                        <button
+                            onClick={() => setIsExploded(!isExploded)}
+                            className="flex items-center gap-3 px-8 py-4 bg-white/5 text-white border border-white/10 rounded-full font-bold hover:bg-white/10 transition-all"
+                        >
                             <Layers className="h-5 w-5" />
-                            {isExploded ? "Implode View" : "Explode View"}
+                            {isExploded ? "Implode View" : "Explore Card"}
                         </button>
+                    </motion.div>
+
+                    {/* Social Proof Stats */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.8 }}
+                        className="flex flex-wrap gap-8 pt-4 border-t border-white/5"
+                    >
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-white">10K+</div>
+                            <div className="text-xs text-zinc-500">Cards Delivered</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-white">130+</div>
+                            <div className="text-xs text-zinc-500">Countries</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-white">4.9★</div>
+                            <div className="text-xs text-zinc-500">Rating</div>
+                        </div>
                     </motion.div>
                 </div>
 

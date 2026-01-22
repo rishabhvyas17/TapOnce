@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -32,46 +32,8 @@ import {
     Package,
     DollarSign
 } from 'lucide-react'
-
-// Mock agent data
-const mockAgentData = {
-    referralCode: 'PRINCE10',
-    referralLink: 'https://taponce.in/agent-signup?ref=PRINCE10'
-}
-
-// Mock sub-agents data
-const mockSubAgents = [
-    {
-        id: '1',
-        name: 'Rahul Kumar',
-        phone: '9876543220',
-        email: 'rahul@example.com',
-        joinedAt: '2026-01-10T10:00:00Z',
-        totalSales: 23,
-        overrideEarnings: 460,
-        status: 'active'
-    },
-    {
-        id: '2',
-        name: 'Priya Mehta',
-        phone: '9876543221',
-        email: 'priya@example.com',
-        joinedAt: '2026-01-05T14:00:00Z',
-        totalSales: 18,
-        overrideEarnings: 320,
-        status: 'active'
-    },
-    {
-        id: '3',
-        name: 'Amit Singh',
-        phone: '9876543222',
-        email: 'amit@example.com',
-        joinedAt: '2025-12-20T09:00:00Z',
-        totalSales: 5,
-        overrideEarnings: 85,
-        status: 'inactive'
-    },
-]
+import { getAgentByProfileId, getSubAgents, Agent, SubAgent } from '@/lib/services/agents'
+import { createClient } from '@/lib/supabase/client'
 
 function formatCurrency(amount: number): string {
     return new Intl.NumberFormat('en-IN', {
@@ -90,25 +52,75 @@ function formatDate(dateString: string): string {
 }
 
 export default function SubAgentNetworkPage() {
+    const [loading, setLoading] = useState(true)
+    const [agent, setAgent] = useState<Agent | null>(null)
+    const [subAgents, setSubAgents] = useState<SubAgent[]>([])
     const [copied, setCopied] = useState(false)
     const [showQrModal, setShowQrModal] = useState(false)
-    const agent = mockAgentData
+
+    // Fetch agent and sub-agents
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const agentData = await getAgentByProfileId(user.id)
+                if (agentData) {
+                    setAgent(agentData)
+                    const subAgentList = await getSubAgents(agentData.id)
+                    setSubAgents(subAgentList)
+                }
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [])
 
     // Calculate totals
-    const totalSubAgents = mockSubAgents.length
-    const activeSubAgents = mockSubAgents.filter(s => s.status === 'active').length
-    const totalOverrideEarnings = mockSubAgents.reduce((sum, s) => sum + s.overrideEarnings, 0)
-    const totalNetworkSales = mockSubAgents.reduce((sum, s) => sum + s.totalSales, 0)
+    const stats = useMemo(() => {
+        const totalSubAgents = subAgents.length
+        const activeSubAgents = subAgents.filter(s => s.status === 'active').length
+        const totalOverrideEarnings = subAgents.reduce((sum, s) => sum + s.overrideEarnings, 0)
+        const totalNetworkSales = subAgents.reduce((sum, s) => sum + s.totalSales, 0)
+        return { totalSubAgents, activeSubAgents, totalOverrideEarnings, totalNetworkSales }
+    }, [subAgents])
+
+    const referralLink = agent ? `https://taponce.in/agent-signup?ref=${agent.referralCode}` : ''
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText(agent.referralLink)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        if (referralLink) {
+            navigator.clipboard.writeText(referralLink)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        }
     }
 
     const handleShareWhatsApp = () => {
-        const message = `Join TapOnce as a Sales Agent and start earning! 💼\n\nUse my referral code: ${agent.referralCode}\n\nSign up here: ${agent.referralLink}`
-        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+        if (agent) {
+            const message = `Join TapOnce as a Sales Agent and start earning! 💼\n\nUse my referral code: ${agent.referralCode}\n\nSign up here: ${referralLink}`
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading your network...</div>
+            </div>
+        )
+    }
+
+    if (!agent) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Unable to load agent data</p>
+                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -128,8 +140,8 @@ export default function SubAgentNetworkPage() {
                         </div>
                         <span className="text-sm text-muted-foreground">Total Recruits</span>
                     </div>
-                    <p className="text-3xl font-bold">{totalSubAgents}</p>
-                    <p className="text-xs text-muted-foreground">{activeSubAgents} active</p>
+                    <p className="text-3xl font-bold">{stats.totalSubAgents}</p>
+                    <p className="text-xs text-muted-foreground">{stats.activeSubAgents} active</p>
                 </div>
 
                 <div className="p-5 bg-white rounded-xl border">
@@ -139,7 +151,7 @@ export default function SubAgentNetworkPage() {
                         </div>
                         <span className="text-sm text-muted-foreground">Network Sales</span>
                     </div>
-                    <p className="text-3xl font-bold">{totalNetworkSales}</p>
+                    <p className="text-3xl font-bold">{stats.totalNetworkSales}</p>
                     <p className="text-xs text-muted-foreground">Cards sold by recruits</p>
                 </div>
 
@@ -150,7 +162,7 @@ export default function SubAgentNetworkPage() {
                         </div>
                         <span className="text-sm text-white/80">Override Earnings</span>
                     </div>
-                    <p className="text-3xl font-bold">{formatCurrency(totalOverrideEarnings)}</p>
+                    <p className="text-3xl font-bold">{formatCurrency(stats.totalOverrideEarnings)}</p>
                     <p className="text-xs text-white/70">2% of sub-agent sales</p>
                 </div>
 
@@ -162,7 +174,7 @@ export default function SubAgentNetworkPage() {
                         <span className="text-sm text-muted-foreground">Avg per Agent</span>
                     </div>
                     <p className="text-3xl font-bold">
-                        {totalSubAgents > 0 ? formatCurrency(totalOverrideEarnings / totalSubAgents) : '₹0'}
+                        {stats.totalSubAgents > 0 ? formatCurrency(stats.totalOverrideEarnings / stats.totalSubAgents) : '₹0'}
                     </p>
                     <p className="text-xs text-muted-foreground">Override earnings</p>
                 </div>
@@ -181,7 +193,7 @@ export default function SubAgentNetworkPage() {
                         <div className="flex items-center gap-2 bg-white/10 rounded-lg p-3">
                             <Input
                                 readOnly
-                                value={agent.referralLink}
+                                value={referralLink}
                                 className="bg-transparent border-0 text-white placeholder:text-white/50 flex-1"
                             />
                             <Button
@@ -237,11 +249,11 @@ export default function SubAgentNetworkPage() {
                 <div className="p-4 border-b">
                     <h3 className="font-semibold flex items-center gap-2">
                         <Users className="w-5 h-5 text-muted-foreground" />
-                        Your Recruited Agents ({totalSubAgents})
+                        Your Recruited Agents ({stats.totalSubAgents})
                     </h3>
                 </div>
 
-                {mockSubAgents.length === 0 ? (
+                {subAgents.length === 0 ? (
                     <div className="p-8 text-center">
                         <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                         <h3 className="text-lg font-semibold">No recruits yet</h3>
@@ -251,7 +263,7 @@ export default function SubAgentNetworkPage() {
                     </div>
                 ) : (
                     <div className="divide-y">
-                        {mockSubAgents.map((subAgent) => (
+                        {subAgents.map((subAgent) => (
                             <div
                                 key={subAgent.id}
                                 className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50"
@@ -259,11 +271,11 @@ export default function SubAgentNetworkPage() {
                                 {/* Agent Info */}
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                                        {subAgent.name.charAt(0)}
+                                        {subAgent.fullName.charAt(0)}
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <h4 className="font-semibold">{subAgent.name}</h4>
+                                            <h4 className="font-semibold">{subAgent.fullName}</h4>
                                             <Badge
                                                 variant={subAgent.status === 'active' ? 'default' : 'secondary'}
                                                 className={subAgent.status === 'active' ? 'bg-green-100 text-green-800' : ''}

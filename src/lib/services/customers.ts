@@ -163,3 +163,172 @@ export async function updateCustomerStatus(
 
     return { success: true }
 }
+
+/**
+ * Get customer by slug (for public tap view)
+ */
+export async function getCustomerBySlug(slug: string): Promise<Customer | null> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('customers')
+        .select(`
+            *,
+            profiles (
+                full_name,
+                phone,
+                avatar_url
+            )
+        `)
+        .eq('slug', slug)
+        .eq('status', 'active')
+        .single()
+
+    if (error || !data) {
+        console.error('Error fetching customer by slug:', error)
+        return null
+    }
+
+    return {
+        id: data.id,
+        profileId: data.profile_id,
+        slug: data.slug,
+        fullName: data.profiles?.full_name || '',
+        email: '',
+        phone: data.profiles?.phone || '',
+        avatarUrl: data.profiles?.avatar_url,
+        company: data.company,
+        jobTitle: data.job_title,
+        bio: data.bio,
+        whatsapp: data.whatsapp,
+        linkedinUrl: data.linkedin_url,
+        instagramUrl: data.instagram_url,
+        facebookUrl: data.facebook_url,
+        twitterUrl: data.twitter_url,
+        websiteUrl: data.website_url,
+        customLinks: data.custom_links || [],
+        status: data.status,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+    }
+}
+
+/**
+ * Get customer by profile ID (for customer dashboard)
+ */
+export async function getCustomerByProfileId(profileId: string): Promise<Customer | null> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('customers')
+        .select(`
+            *,
+            profiles (
+                full_name,
+                phone,
+                avatar_url
+            )
+        `)
+        .eq('profile_id', profileId)
+        .single()
+
+    if (error || !data) {
+        console.error('Error fetching customer by profile:', error)
+        return null
+    }
+
+    return {
+        id: data.id,
+        profileId: data.profile_id,
+        slug: data.slug,
+        fullName: data.profiles?.full_name || '',
+        email: '',
+        phone: data.profiles?.phone || '',
+        avatarUrl: data.profiles?.avatar_url,
+        company: data.company,
+        jobTitle: data.job_title,
+        bio: data.bio,
+        whatsapp: data.whatsapp,
+        linkedinUrl: data.linkedin_url,
+        instagramUrl: data.instagram_url,
+        facebookUrl: data.facebook_url,
+        twitterUrl: data.twitter_url,
+        websiteUrl: data.website_url,
+        customLinks: data.custom_links || [],
+        status: data.status,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+    }
+}
+
+/**
+ * Update customer profile data
+ */
+export interface UpdateCustomerPayload {
+    fullName?: string
+    jobTitle?: string
+    company?: string
+    bio?: string
+    phone?: string
+    whatsapp?: string
+    linkedinUrl?: string
+    instagramUrl?: string
+    facebookUrl?: string
+    twitterUrl?: string
+    websiteUrl?: string
+    avatarUrl?: string
+}
+
+export async function updateCustomerProfile(
+    customerId: string,
+    payload: UpdateCustomerPayload
+): Promise<{ success: boolean; error?: string }> {
+    const supabase = createClient()
+
+    const updateData: any = { updated_at: new Date().toISOString() }
+
+    if (payload.jobTitle !== undefined) updateData.job_title = payload.jobTitle
+    if (payload.company !== undefined) updateData.company = payload.company
+    if (payload.bio !== undefined) updateData.bio = payload.bio
+    if (payload.whatsapp !== undefined) updateData.whatsapp = payload.whatsapp
+    if (payload.linkedinUrl !== undefined) updateData.linkedin_url = payload.linkedinUrl
+    if (payload.instagramUrl !== undefined) updateData.instagram_url = payload.instagramUrl
+    if (payload.facebookUrl !== undefined) updateData.facebook_url = payload.facebookUrl
+    if (payload.twitterUrl !== undefined) updateData.twitter_url = payload.twitterUrl
+    if (payload.websiteUrl !== undefined) updateData.website_url = payload.websiteUrl
+
+    const { error } = await supabase
+        .from('customers')
+        .update(updateData)
+        .eq('id', customerId)
+
+    if (error) {
+        console.error('Error updating customer profile:', error)
+        return { success: false, error: error.message }
+    }
+
+    // Also update profile table if name or phone changed
+    if (payload.fullName || payload.phone || payload.avatarUrl) {
+        const { data: customer } = await supabase
+            .from('customers')
+            .select('profile_id')
+            .eq('id', customerId)
+            .single()
+
+        if (customer) {
+            const profileUpdate: any = {}
+            if (payload.fullName) profileUpdate.full_name = payload.fullName
+            if (payload.phone) profileUpdate.phone = payload.phone
+            if (payload.avatarUrl) profileUpdate.avatar_url = payload.avatarUrl
+
+            await supabase
+                .from('profiles')
+                .update(profileUpdate)
+                .eq('id', customer.profile_id)
+        }
+    }
+
+    return { success: true }
+}
+
+

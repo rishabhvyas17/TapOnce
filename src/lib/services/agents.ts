@@ -285,3 +285,136 @@ export async function getCommissionLiabilities(): Promise<CommissionLiability[]>
         }
     })
 }
+
+/**
+ * Get agent by profile ID (for current user)
+ */
+export async function getAgentByProfileId(profileId: string): Promise<Agent | null> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('agents')
+        .select(`
+            *,
+            profiles (
+                full_name,
+                phone
+            )
+        `)
+        .eq('profile_id', profileId)
+        .single()
+
+    if (error || !data) {
+        console.error('Error fetching agent by profile:', error)
+        return null
+    }
+
+    return {
+        id: data.id,
+        profileId: data.profile_id,
+        fullName: data.profiles?.full_name || '',
+        email: '',
+        phone: data.profiles?.phone || '',
+        referralCode: data.referral_code,
+        city: data.city,
+        upiId: data.upi_id,
+        bankAccount: data.bank_account,
+        bankIfsc: data.bank_ifsc,
+        bankHolderName: data.bank_holder_name,
+        baseCommission: data.base_commission,
+        parentAgentId: data.parent_agent_id,
+        totalSales: data.total_sales,
+        totalEarnings: data.total_earnings,
+        availableBalance: data.available_balance,
+        status: data.status,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+    }
+}
+
+/**
+ * Get payout history for agent
+ */
+export async function getAgentPayouts(agentId: string): Promise<{
+    id: string
+    amount: number
+    paymentMethod: string | null
+    adminNotes: string | null
+    status: string
+    createdAt: string
+}[]> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('payouts')
+        .select('*')
+        .eq('agent_id', agentId)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching agent payouts:', error)
+        return []
+    }
+
+    return (data || []).map((payout: any) => ({
+        id: payout.id,
+        amount: payout.amount,
+        paymentMethod: payout.payment_method,
+        adminNotes: payout.admin_notes,
+        status: payout.status,
+        createdAt: payout.created_at
+    }))
+}
+
+/**
+ * Get sub-agents recruited by an agent
+ */
+export interface SubAgent {
+    id: string
+    fullName: string
+    phone: string
+    email: string
+    joinedAt: string
+    totalSales: number
+    overrideEarnings: number
+    status: 'active' | 'inactive'
+}
+
+export async function getSubAgents(agentId: string): Promise<SubAgent[]> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('agents')
+        .select(`
+            id,
+            status,
+            total_sales,
+            created_at,
+            profiles (
+                full_name,
+                phone
+            )
+        `)
+        .eq('parent_agent_id', agentId)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching sub-agents:', error)
+        return []
+    }
+
+    // Note: Override earnings would ideally come from a calculated field or join
+    // For now, we'll calculate as 2% of total sale value (assume avg ₹700 per card)
+    return (data || []).map((agent: any) => ({
+        id: agent.id,
+        fullName: agent.profiles?.full_name || 'Unknown',
+        phone: agent.profiles?.phone || '',
+        email: '',
+        joinedAt: agent.created_at,
+        totalSales: agent.total_sales || 0,
+        overrideEarnings: Math.floor((agent.total_sales || 0) * 700 * 0.02), // 2% of assumed ₹700 avg
+        status: agent.status
+    }))
+}
+
+

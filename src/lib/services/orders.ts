@@ -219,3 +219,137 @@ export async function getOrdersForKanban(): Promise<Record<OrderStatus, OrderLis
 
     return grouped as Record<OrderStatus, OrderListItem[]>
 }
+
+/**
+ * Get recent orders for an agent (for agent dashboard)
+ */
+export async function getRecentOrdersByAgentId(
+    agentId: string,
+    limit: number = 5
+): Promise<OrderListItem[]> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('orders')
+        .select(`
+            id,
+            order_number,
+            customer_name,
+            customer_company,
+            customer_phone,
+            customer_photo_url,
+            card_design_id,
+            sale_price,
+            msp_at_order,
+            commission_amount,
+            status,
+            payment_status,
+            is_direct_sale,
+            is_below_msp,
+            created_at,
+            card_designs (
+                id,
+                name,
+                preview_url
+            )
+        `)
+        .eq('agent_id', agentId)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+    if (error) {
+        console.error('Error fetching agent orders:', error)
+        return []
+    }
+
+    return (data || []).map((order: any) => ({
+        id: order.id,
+        orderNumber: order.order_number,
+        customerName: order.customer_name,
+        customerCompany: order.customer_company,
+        customerPhone: order.customer_phone,
+        customerPhotoUrl: order.customer_photo_url,
+        cardDesign: order.card_designs ? {
+            id: order.card_designs.id,
+            name: order.card_designs.name,
+            previewUrl: order.card_designs.preview_url
+        } : { id: '', name: 'Unknown', previewUrl: null },
+        agent: null,
+        salePrice: order.sale_price,
+        mspAtOrder: order.msp_at_order,
+        commissionAmount: order.commission_amount,
+        status: order.status,
+        paymentStatus: order.payment_status,
+        isDirectSale: order.is_direct_sale,
+        isBelowMsp: order.is_below_msp,
+        createdAt: order.created_at
+    }))
+}
+
+/**
+ * Create a new order (agent order submission)
+ */
+export interface CreateOrderPayload {
+    customerName: string
+    customerCompany?: string
+    customerPhone: string
+    customerEmail: string
+    customerWhatsapp?: string
+    customerPhotoUrl?: string
+    cardDesignId: string
+    line1Text?: string
+    line2Text?: string
+    mspAtOrder: number
+    salePrice: number
+    commissionAmount: number
+    paymentStatus: 'pending' | 'advance_paid' | 'paid' | 'cod'
+    isBelowMsp: boolean
+    specialInstructions?: string
+    agentId: string
+}
+
+export async function createOrder(payload: CreateOrderPayload): Promise<{
+    success: boolean
+    orderId?: string
+    orderNumber?: number
+    error?: string
+}> {
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+        .from('orders')
+        .insert({
+            customer_name: payload.customerName,
+            customer_company: payload.customerCompany,
+            customer_phone: payload.customerPhone,
+            customer_email: payload.customerEmail,
+            customer_whatsapp: payload.customerWhatsapp,
+            customer_photo_url: payload.customerPhotoUrl,
+            card_design_id: payload.cardDesignId,
+            line1_text: payload.line1Text,
+            line2_text: payload.line2Text,
+            msp_at_order: payload.mspAtOrder,
+            sale_price: payload.salePrice,
+            commission_amount: payload.commissionAmount,
+            payment_status: payload.paymentStatus,
+            is_below_msp: payload.isBelowMsp,
+            special_instructions: payload.specialInstructions,
+            agent_id: payload.agentId,
+            status: payload.isBelowMsp ? 'pending_approval' : 'pending_approval',
+            is_direct_sale: false
+        })
+        .select('id, order_number')
+        .single()
+
+    if (error) {
+        console.error('Error creating order:', error)
+        return { success: false, error: error.message }
+    }
+
+    return {
+        success: true,
+        orderId: data.id,
+        orderNumber: data.order_number
+    }
+}
+

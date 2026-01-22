@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,43 +31,62 @@ import {
     CheckCircle,
     Eye
 } from 'lucide-react'
-
-// Mock profile data
-const mockProfile = {
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
-    fullName: 'Rahul Verma',
-    jobTitle: 'Founder & CEO',
-    companyName: 'Tech Solutions Pvt Ltd',
-    bio: 'Passionate entrepreneur building innovative tech solutions. 10+ years of experience in software development and business strategy.',
-    phone: '+919876543210',
-    email: 'rahul@techsolutions.com',
-    whatsapp: '+919876543210',
-    linkedIn: 'https://linkedin.com/in/rahulverma',
-    instagram: 'https://instagram.com/rahulverma',
-    facebook: '',
-    twitter: 'https://twitter.com/rahulverma',
-    website: 'https://rahulverma.com'
-}
+import { getCustomerByProfileId, updateCustomerProfile, Customer } from '@/lib/services/customers'
+import { createClient } from '@/lib/supabase/client'
 
 export default function ProfileEditorPage() {
     const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [customer, setCustomer] = useState<Customer | null>(null)
     const [isSaving, setIsSaving] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
 
     // Form state
-    const [photo, setPhoto] = useState(mockProfile.photo)
-    const [fullName, setFullName] = useState(mockProfile.fullName)
-    const [jobTitle, setJobTitle] = useState(mockProfile.jobTitle)
-    const [companyName, setCompanyName] = useState(mockProfile.companyName)
-    const [bio, setBio] = useState(mockProfile.bio)
-    const [phone, setPhone] = useState(mockProfile.phone)
-    const [email, setEmail] = useState(mockProfile.email)
-    const [whatsapp, setWhatsapp] = useState(mockProfile.whatsapp)
-    const [linkedIn, setLinkedIn] = useState(mockProfile.linkedIn)
-    const [instagram, setInstagram] = useState(mockProfile.instagram)
-    const [facebook, setFacebook] = useState(mockProfile.facebook)
-    const [twitter, setTwitter] = useState(mockProfile.twitter)
-    const [website, setWebsite] = useState(mockProfile.website)
+    const [photo, setPhoto] = useState('')
+    const [fullName, setFullName] = useState('')
+    const [jobTitle, setJobTitle] = useState('')
+    const [companyName, setCompanyName] = useState('')
+    const [bio, setBio] = useState('')
+    const [phone, setPhone] = useState('')
+    const [email, setEmail] = useState('')
+    const [whatsapp, setWhatsapp] = useState('')
+    const [linkedIn, setLinkedIn] = useState('')
+    const [instagram, setInstagram] = useState('')
+    const [facebook, setFacebook] = useState('')
+    const [twitter, setTwitter] = useState('')
+    const [website, setWebsite] = useState('')
+
+    // Fetch customer data
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const customerData = await getCustomerByProfileId(user.id)
+                if (customerData) {
+                    setCustomer(customerData)
+                    // Populate form fields
+                    setPhoto(customerData.avatarUrl || '')
+                    setFullName(customerData.fullName || '')
+                    setJobTitle(customerData.jobTitle || '')
+                    setCompanyName(customerData.company || '')
+                    setBio(customerData.bio || '')
+                    setPhone(customerData.phone || '')
+                    setEmail(customerData.email || '')
+                    setWhatsapp(customerData.whatsapp || '')
+                    setLinkedIn(customerData.linkedinUrl || '')
+                    setInstagram(customerData.instagramUrl || '')
+                    setFacebook(customerData.facebookUrl || '')
+                    setTwitter(customerData.twitterUrl || '')
+                    setWebsite(customerData.websiteUrl || '')
+                }
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [])
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -81,12 +100,51 @@ export default function ProfileEditorPage() {
     }
 
     const handleSave = async () => {
+        if (!customer) return
+
         setIsSaving(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
+
+        const result = await updateCustomerProfile(customer.id, {
+            fullName,
+            jobTitle,
+            company: companyName,
+            bio,
+            phone,
+            whatsapp,
+            linkedinUrl: linkedIn,
+            instagramUrl: instagram,
+            facebookUrl: facebook,
+            twitterUrl: twitter,
+            websiteUrl: website
+        })
+
         setIsSaving(false)
-        setShowSuccess(true)
-        setTimeout(() => setShowSuccess(false), 3000)
+
+        if (result.success) {
+            setShowSuccess(true)
+            setTimeout(() => setShowSuccess(false), 3000)
+        } else {
+            alert('Failed to save: ' + (result.error || 'Unknown error'))
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading your profile...</div>
+            </div>
+        )
+    }
+
+    if (!customer) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Unable to load your profile</p>
+                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -133,7 +191,7 @@ export default function ProfileEditorPage() {
                         <div className="text-center">
                             <div className="relative inline-block">
                                 <img
-                                    src={photo}
+                                    src={photo || 'https://via.placeholder.com/128'}
                                     alt="Profile"
                                     className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                                 />
@@ -239,8 +297,10 @@ export default function ProfileEditorPage() {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="you@example.com"
                                         className="pl-10"
+                                        disabled
                                     />
                                 </div>
+                                <p className="text-xs text-muted-foreground">Email cannot be changed</p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="whatsapp">WhatsApp Number</Label>

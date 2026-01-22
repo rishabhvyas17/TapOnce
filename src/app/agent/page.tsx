@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -23,27 +23,12 @@ import {
     DollarSign,
     Copy,
     Share2,
-    QrCode,
-    ArrowRight,
-    CheckCircle
+    CheckCircle,
+    ArrowRight
 } from 'lucide-react'
-
-// Mock agent data - will be replaced with real data from Supabase
-const mockAgentData = {
-    name: 'Prince Yadav',
-    referralCode: 'PRINCE10',
-    totalSales: 42,
-    totalEarnings: 12600,
-    availableBalance: 2300,
-    amountReceived: 10300
-}
-
-// Mock recent orders
-const mockRecentOrders = [
-    { id: '1', orderNumber: 12050, customerName: 'Rahul Verma', status: 'pending_approval', amount: 800, date: '2 hours ago' },
-    { id: '2', orderNumber: 12049, customerName: 'Priya Sharma', status: 'approved', amount: 750, date: '1 day ago' },
-    { id: '3', orderNumber: 12048, customerName: 'Amit Kumar', status: 'delivered', amount: 900, date: '3 days ago' },
-]
+import { getAgentByProfileId, Agent } from '@/lib/services/agents'
+import { getRecentOrdersByAgentId, OrderListItem } from '@/lib/services/orders'
+import { createClient } from '@/lib/supabase/client'
 
 const statusColors: Record<string, string> = {
     pending_approval: 'bg-yellow-100 text-yellow-800',
@@ -73,27 +58,87 @@ function formatCurrency(amount: number): string {
     }).format(amount)
 }
 
+function formatRelativeTime(dateString: string): string {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+    if (diffHours < 1) return 'Just now'
+    if (diffHours < 24) return `${diffHours} hours ago`
+    if (diffDays < 7) return `${diffDays} days ago`
+    return date.toLocaleDateString()
+}
+
 export default function AgentDashboard() {
     const [copied, setCopied] = useState(false)
-    const agent = mockAgentData
+    const [loading, setLoading] = useState(true)
+    const [agent, setAgent] = useState<Agent | null>(null)
+    const [recentOrders, setRecentOrders] = useState<OrderListItem[]>([])
+
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const agentData = await getAgentByProfileId(user.id)
+                if (agentData) {
+                    setAgent(agentData)
+                    const orders = await getRecentOrdersByAgentId(agentData.id, 5)
+                    setRecentOrders(orders)
+                }
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [])
 
     const handleCopyCode = () => {
-        navigator.clipboard.writeText(agent.referralCode)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        if (agent) {
+            navigator.clipboard.writeText(agent.referralCode)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        }
     }
 
     const handleShare = () => {
-        const shareUrl = `https://taponce.in/agent-signup?ref=${agent.referralCode}`
-        const message = `Join TapOnce as a Sales Agent! Use my referral code: ${agent.referralCode}\n\nSign up here: ${shareUrl}`
-        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+        if (agent) {
+            const shareUrl = `https://taponce.in/agent-signup?ref=${agent.referralCode}`
+            const message = `Join TapOnce as a Sales Agent! Use my referral code: ${agent.referralCode}\n\nSign up here: ${shareUrl}`
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+        }
     }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading your dashboard...</div>
+            </div>
+        )
+    }
+
+    if (!agent) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Unable to load agent data</p>
+                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                </div>
+            </div>
+        )
+    }
+
+    // Calculate amount received (total earnings - available balance)
+    const amountReceived = agent.totalEarnings - agent.availableBalance
 
     return (
         <div className="space-y-6">
             {/* Welcome Section */}
             <div>
-                <h1 className="text-2xl font-bold">Welcome back, {agent.name}!</h1>
+                <h1 className="text-2xl font-bold">Welcome back, {agent.fullName}!</h1>
                 <p className="text-muted-foreground">Here's your sales overview</p>
             </div>
 
@@ -143,7 +188,7 @@ export default function AgentDashboard() {
                         </div>
                         <span className="text-sm text-muted-foreground">Amount Received</span>
                     </div>
-                    <p className="text-3xl font-bold">{formatCurrency(agent.amountReceived)}</p>
+                    <p className="text-3xl font-bold">{formatCurrency(amountReceived)}</p>
                     <p className="text-xs text-muted-foreground mt-1">Total payouts</p>
                 </div>
             </div>
@@ -210,30 +255,36 @@ export default function AgentDashboard() {
                     </a>
                 </div>
                 <div className="divide-y">
-                    {mockRecentOrders.map((order) => (
-                        <div key={order.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                    <span className="text-sm font-medium text-gray-600">
-                                        {order.customerName.charAt(0)}
-                                    </span>
-                                </div>
-                                <div>
-                                    <p className="font-medium">{order.customerName}</p>
-                                    <p className="text-sm text-muted-foreground">Order #{order.orderNumber}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="text-right">
-                                    <p className="font-medium">{formatCurrency(order.amount)}</p>
-                                    <p className="text-xs text-muted-foreground">{order.date}</p>
-                                </div>
-                                <Badge className={statusColors[order.status]}>
-                                    {statusLabels[order.status]}
-                                </Badge>
-                            </div>
+                    {recentOrders.length === 0 ? (
+                        <div className="p-8 text-center text-muted-foreground">
+                            No orders yet. Submit your first order to get started!
                         </div>
-                    ))}
+                    ) : (
+                        recentOrders.map((order) => (
+                            <div key={order.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <span className="text-sm font-medium text-gray-600">
+                                            {order.customerName.charAt(0)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">{order.customerName}</p>
+                                        <p className="text-sm text-muted-foreground">Order #{order.orderNumber}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <div className="text-right">
+                                        <p className="font-medium">{formatCurrency(order.salePrice)}</p>
+                                        <p className="text-xs text-muted-foreground">{formatRelativeTime(order.createdAt)}</p>
+                                    </div>
+                                    <Badge className={statusColors[order.status] || 'bg-gray-100'}>
+                                        {statusLabels[order.status] || order.status}
+                                    </Badge>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>

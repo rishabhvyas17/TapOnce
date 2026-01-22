@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,7 +26,6 @@ import {
 import { Badge } from '@/components/ui/badge'
 import {
     ArrowLeft,
-    Upload,
     AlertTriangle,
     CheckCircle,
     Calculator,
@@ -45,13 +44,11 @@ import {
     DialogTitle,
     DialogFooter,
 } from '@/components/ui/dialog'
-
-// Mock card designs with agent's personalized MSP
-const mockCardDesigns = [
-    { id: '1', name: 'Vertical Blue Premium', previewUrl: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=200&h=300&fit=crop', msp: 600, description: 'Professional vertical design' },
-    { id: '2', name: 'Horizontal Gold Elite', previewUrl: 'https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=300&h=200&fit=crop', msp: 800, description: 'Premium with gold accents' },
-    { id: '3', name: 'Minimal White Pro', previewUrl: 'https://images.unsplash.com/photo-1541182388248-95b2e42f9eee?w=200&h=300&fit=crop', msp: 550, description: 'Clean minimalist design' },
-]
+import { getCardDesigns } from '@/lib/services/catalog'
+import { getAgentByProfileId, Agent } from '@/lib/services/agents'
+import { createOrder } from '@/lib/services/orders'
+import { createClient } from '@/lib/supabase/client'
+import { CardDesign } from '@/types/card-design'
 
 const BASE_COMMISSION = 100 // ₹100 base commission per card
 
@@ -65,6 +62,9 @@ function formatCurrency(amount: number): string {
 
 export default function SubmitOrderPage() {
     const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [agent, setAgent] = useState<Agent | null>(null)
+    const [cardDesigns, setCardDesigns] = useState<CardDesign[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [showBelowMspModal, setShowBelowMspModal] = useState(false)
     const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -82,12 +82,31 @@ export default function SubmitOrderPage() {
     const [photoFile, setPhotoFile] = useState<File | null>(null)
     const [photoPreview, setPhotoPreview] = useState<string | null>(null)
     const [sellingPrice, setSellingPrice] = useState<number>(0)
-    const [paymentStatus, setPaymentStatus] = useState('cod')
+    const [paymentStatus, setPaymentStatus] = useState<'pending' | 'advance_paid' | 'paid' | 'cod'>('cod')
     const [specialInstructions, setSpecialInstructions] = useState('')
 
+    // Fetch agent and card designs
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const agentData = await getAgentByProfileId(user.id)
+                setAgent(agentData)
+
+                const { designs } = await getCardDesigns({ status: 'active' })
+                setCardDesigns(designs)
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [])
+
     // Get selected card design
-    const selectedCard = mockCardDesigns.find(c => c.id === selectedCardId)
-    const msp = selectedCard?.msp || 0
+    const selectedCard = cardDesigns.find(c => c.id === selectedCardId)
+    const msp = selectedCard?.baseMsp || 0
 
     // Commission calculation
     const commission = useMemo(() => {
@@ -107,20 +126,16 @@ export default function SubmitOrderPage() {
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            // Validate file type
             if (!['image/jpeg', 'image/png'].includes(file.type)) {
                 alert('Please upload a JPG or PNG image')
                 return
             }
-            // Validate file size (5MB max)
             if (file.size > 5 * 1024 * 1024) {
                 alert('Image must be less than 5MB')
                 return
             }
 
             setPhotoFile(file)
-
-            // Create preview
             const reader = new FileReader()
             reader.onloadend = () => {
                 setPhotoPreview(reader.result as string)
@@ -139,13 +154,14 @@ export default function SubmitOrderPage() {
             selectedCardId &&
             line1Text.trim() &&
             photoFile &&
-            sellingPrice > 0
+            sellingPrice > 0 &&
+            agent
         )
-    }, [customerName, companyName, phone, email, selectedCardId, line1Text, photoFile, sellingPrice])
+    }, [customerName, companyName, phone, email, selectedCardId, line1Text, photoFile, sellingPrice, agent])
 
     // Handle form submission
     const handleSubmit = async (forceSubmit = false) => {
-        if (!isFormValid) return
+        if (!isFormValid || !agent || !selectedCard) return
 
         // Check for below-MSP price
         if (isBelowMsp && !forceSubmit) {
@@ -156,19 +172,59 @@ export default function SubmitOrderPage() {
         setIsSubmitting(true)
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500))
+            // TODO: Upload photo to Supabase Storage and get URL
+            const photoUrl = '' // For now, skip photo upload
 
-            // Generate order number
-            const orderNumber = 12050 + Math.floor(Math.random() * 100)
-            setNewOrderNumber(orderNumber)
-            setShowSuccessModal(true)
+            const result = await createOrder({
+                customerName: customerName.trim(),
+                customerCompany: companyName.trim(),
+                customerPhone: phone.trim(),
+                customerEmail: email.trim(),
+                customerWhatsapp: whatsapp.trim() || phone.trim(),
+                customerPhotoUrl: photoUrl,
+                cardDesignId: selectedCardId,
+                line1Text: line1Text.trim(),
+                line2Text: line2Text.trim(),
+                mspAtOrder: msp,
+                salePrice: sellingPrice,
+                commissionAmount: commission.total,
+                paymentStatus: paymentStatus,
+                isBelowMsp: isBelowMsp,
+                specialInstructions: specialInstructions.trim(),
+                agentId: agent.id
+            })
+
+            if (result.success) {
+                setNewOrderNumber(result.orderNumber || 0)
+                setShowSuccessModal(true)
+            } else {
+                alert('Failed to submit order: ' + (result.error || 'Unknown error'))
+            }
         } catch (error) {
             alert('Failed to submit order. Please try again.')
         } finally {
             setIsSubmitting(false)
             setShowBelowMspModal(false)
         }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading...</div>
+            </div>
+        )
+    }
+
+    if (!agent) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Unable to load agent data</p>
+                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -280,11 +336,11 @@ export default function SubmitOrderPage() {
                                         <SelectValue placeholder="Choose a card design" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {mockCardDesigns.map((card) => (
+                                        {cardDesigns.map((card) => (
                                             <SelectItem key={card.id} value={card.id}>
                                                 <div className="flex items-center gap-3">
                                                     <span>{card.name}</span>
-                                                    <Badge variant="secondary">MSP: {formatCurrency(card.msp)}</Badge>
+                                                    <Badge variant="secondary">MSP: {formatCurrency(card.baseMsp)}</Badge>
                                                 </div>
                                             </SelectItem>
                                         ))}
@@ -294,19 +350,12 @@ export default function SubmitOrderPage() {
 
                             {/* Selected Card Preview */}
                             {selectedCard && (
-                                <div className="p-4 bg-gray-50 rounded-lg flex gap-4">
-                                    <img
-                                        src={selectedCard.previewUrl}
-                                        alt={selectedCard.name}
-                                        className="w-20 h-28 object-cover rounded"
-                                    />
-                                    <div>
-                                        <p className="font-medium">{selectedCard.name}</p>
-                                        <p className="text-sm text-muted-foreground">{selectedCard.description}</p>
-                                        <p className="mt-2 font-bold text-lg text-green-600">
-                                            Your MSP: {formatCurrency(selectedCard.msp)}
-                                        </p>
-                                    </div>
+                                <div className="p-4 bg-gray-50 rounded-lg">
+                                    <p className="font-medium">{selectedCard.name}</p>
+                                    <p className="text-sm text-muted-foreground">{selectedCard.description}</p>
+                                    <p className="mt-2 font-bold text-lg text-green-600">
+                                        Your MSP: {formatCurrency(selectedCard.baseMsp)}
+                                    </p>
                                 </div>
                             )}
                         </div>
@@ -459,12 +508,12 @@ export default function SubmitOrderPage() {
 
                             <div className="space-y-2">
                                 <Label>Payment Status *</Label>
-                                <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+                                <Select value={paymentStatus} onValueChange={(v: any) => setPaymentStatus(v)}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="paid_full">Paid in Full</SelectItem>
+                                        <SelectItem value="paid">Paid in Full</SelectItem>
                                         <SelectItem value="advance_paid">Advance Paid</SelectItem>
                                         <SelectItem value="cod">COD (Cash on Delivery)</SelectItem>
                                     </SelectContent>
@@ -520,8 +569,8 @@ export default function SubmitOrderPage() {
                         <Button variant="outline" onClick={() => setShowBelowMspModal(false)}>
                             Cancel
                         </Button>
-                        <Button onClick={() => handleSubmit(true)}>
-                            Submit for Special Approval
+                        <Button onClick={() => handleSubmit(true)} disabled={isSubmitting}>
+                            {isSubmitting ? 'Submitting...' : 'Submit for Special Approval'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -21,69 +21,19 @@ import { CardDesignCard } from '@/components/admin/catalog/CardDesignCard'
 import { CardDesignModal } from '@/components/admin/catalog/CardDesignModal'
 import { AgentMspModal } from '@/components/admin/catalog/AgentMspModal'
 import { CardDesign, CardDesignStatus, CreateCardDesignPayload, UpdateCardDesignPayload } from '@/types/card-design'
+import {
+    getCardDesigns,
+    createCardDesign,
+    updateCardDesign,
+    getAgentMsps,
+    updateAgentMsp
+} from '@/lib/services/catalog'
 import { Plus, Package, Search, CheckCircle, XCircle, TrendingUp } from 'lucide-react'
 
-// Mock Data - will be replaced with Supabase queries
-const mockCardDesigns: CardDesign[] = [
-    {
-        id: '1',
-        name: 'Vertical Blue Premium',
-        description: 'Professional vertical design with blue gradient',
-        baseMsp: 600,
-        previewUrl: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&h=600&fit=crop',
-        templateUrl: '/templates/vertical-blue-premium.pdf',
-        status: 'active',
-        totalSales: 42,
-        createdAt: '2026-01-10T10:00:00Z',
-        updatedAt: '2026-01-10T10:00:00Z'
-    },
-    {
-        id: '2',
-        name: 'Horizontal Gold Elite',
-        description: 'Premium horizontal card with gold foil accents',
-        baseMsp: 800,
-        previewUrl: 'https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=600&h=400&fit=crop',
-        templateUrl: '/templates/horizontal-gold-elite.pdf',
-        status: 'active',
-        totalSales: 28,
-        createdAt: '2026-01-12T10:00:00Z',
-        updatedAt: '2026-01-12T10:00:00Z'
-    },
-    {
-        id: '3',
-        name: 'Minimal White Pro',
-        description: 'Clean, minimalist design with subtle elegance',
-        baseMsp: 550,
-        previewUrl: 'https://images.unsplash.com/photo-1541182388248-95b2e42f9eee?w=400&h=600&fit=crop',
-        templateUrl: '/templates/minimal-white-pro.pdf',
-        status: 'active',
-        totalSales: 35,
-        createdAt: '2026-01-08T10:00:00Z',
-        updatedAt: '2026-01-08T10:00:00Z'
-    },
-    {
-        id: '4',
-        name: 'Corporate Classic',
-        description: 'Traditional business card styling',
-        baseMsp: 500,
-        previewUrl: '',
-        templateUrl: '',
-        status: 'inactive',
-        totalSales: 15,
-        createdAt: '2026-01-05T10:00:00Z',
-        updatedAt: '2026-01-05T10:00:00Z'
-    }
-]
-
-const mockAgentMsps = [
-    { agentId: '1', agentName: 'Prince Yadav', mspAmount: 550 },
-    { agentId: '2', agentName: 'Rahul Sharma', mspAmount: 600 },
-    { agentId: '3', agentName: 'Priya Singh', mspAmount: null },
-    { agentId: '4', agentName: 'Amit Kumar', mspAmount: 650 }
-]
-
 export default function AdminCatalogPage() {
-    const [designs, setDesigns] = useState<CardDesign[]>(mockCardDesigns)
+    const [designs, setDesigns] = useState<CardDesign[]>([])
+    const [total, setTotal] = useState(0)
+    const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState<CardDesignStatus | 'all'>('all')
 
@@ -91,27 +41,39 @@ export default function AdminCatalogPage() {
     const [designModalOpen, setDesignModalOpen] = useState(false)
     const [mspModalOpen, setMspModalOpen] = useState(false)
     const [selectedDesign, setSelectedDesign] = useState<CardDesign | null>(null)
+    const [agentMsps, setAgentMsps] = useState<{ agentId: string; agentName: string; mspAmount: number | null }[]>([])
+
+    // Fetch designs from Supabase
+    useEffect(() => {
+        async function fetchDesigns() {
+            setLoading(true)
+            const response = await getCardDesigns({
+                status: statusFilter === 'all' ? undefined : statusFilter
+            })
+            setDesigns(response.designs)
+            setTotal(response.total)
+            setLoading(false)
+        }
+        fetchDesigns()
+    }, [statusFilter])
 
     // Stats
     const stats = useMemo(() => ({
-        total: designs.length,
+        total: total,
         active: designs.filter(d => d.status === 'active').length,
         inactive: designs.filter(d => d.status === 'inactive').length,
         totalSales: designs.reduce((sum, d) => sum + d.totalSales, 0)
-    }), [designs])
+    }), [designs, total])
 
-    // Filtered designs
+    // Filtered designs (client-side search)
     const filteredDesigns = useMemo(() => {
         return designs.filter(design => {
             const matchesSearch =
                 design.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 design.description?.toLowerCase().includes(searchQuery.toLowerCase())
-
-            const matchesStatus = statusFilter === 'all' || design.status === statusFilter
-
-            return matchesSearch && matchesStatus
+            return matchesSearch
         })
-    }, [designs, searchQuery, statusFilter])
+    }, [designs, searchQuery])
 
     const handleAddDesign = () => {
         setSelectedDesign(null)
@@ -123,51 +85,75 @@ export default function AdminCatalogPage() {
         setDesignModalOpen(true)
     }
 
-    const handleSetAgentMsp = (design: CardDesign) => {
+    const handleSetAgentMsp = async (design: CardDesign) => {
         setSelectedDesign(design)
+        // Fetch agent MSPs for this design
+        const msps = await getAgentMsps(design.id)
+        setAgentMsps(msps)
         setMspModalOpen(true)
     }
 
     const handleToggleStatus = async (design: CardDesign) => {
         const newStatus: CardDesignStatus = design.status === 'active' ? 'inactive' : 'active'
-        setDesigns(prev => prev.map(d =>
-            d.id === design.id ? { ...d, status: newStatus } : d
-        ))
+        const result = await updateCardDesign(design.id, { status: newStatus })
+
+        if (result.success) {
+            setDesigns(prev => prev.map(d =>
+                d.id === design.id ? { ...d, status: newStatus } : d
+            ))
+        }
     }
 
     const handleDeleteDesign = async (design: CardDesign) => {
         if (confirm(`Are you sure you want to delete "${design.name}"?`)) {
-            setDesigns(prev => prev.filter(d => d.id !== design.id))
+            // For now, just set to inactive (soft delete)
+            const result = await updateCardDesign(design.id, { status: 'inactive' })
+            if (result.success) {
+                setDesigns(prev => prev.filter(d => d.id !== design.id))
+            }
         }
     }
 
     const handleSubmitDesign = async (data: CreateCardDesignPayload | UpdateCardDesignPayload) => {
         if (selectedDesign) {
             // Update existing
-            setDesigns(prev => prev.map(d =>
-                d.id === selectedDesign.id
-                    ? { ...d, ...data, updatedAt: new Date().toISOString() }
-                    : d
-            ))
+            const result = await updateCardDesign(selectedDesign.id, data as UpdateCardDesignPayload)
+            if (result.success) {
+                setDesigns(prev => prev.map(d =>
+                    d.id === selectedDesign.id
+                        ? { ...d, ...data, updatedAt: new Date().toISOString() }
+                        : d
+                ))
+            }
         } else {
             // Create new
-            const newDesign: CardDesign = {
-                id: Date.now().toString(),
-                ...(data as CreateCardDesignPayload),
-                totalSales: 0,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+            const result = await createCardDesign(data as CreateCardDesignPayload)
+            if (result.success && result.id) {
+                // Refresh list
+                const response = await getCardDesigns()
+                setDesigns(response.designs)
+                setTotal(response.total)
             }
-            setDesigns(prev => [newDesign, ...prev])
         }
+        setDesignModalOpen(false)
     }
 
     const handleSaveAgentMsps = async (
         designId: string,
         updates: { agentId: string; mspAmount: number }[]
     ) => {
-        // In real app, this would call updateAgentMsp for each
-        console.log('Saving MSPs for design:', designId, updates)
+        for (const update of updates) {
+            await updateAgentMsp(designId, update.agentId, update.mspAmount)
+        }
+        setMspModalOpen(false)
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+                <div className="text-muted-foreground">Loading card designs...</div>
+            </div>
+        )
     }
 
     return (
@@ -288,7 +274,7 @@ export default function AdminCatalogPage() {
 
             <AgentMspModal
                 design={selectedDesign}
-                agents={mockAgentMsps}
+                agents={agentMsps}
                 open={mspModalOpen}
                 onOpenChange={setMspModalOpen}
                 onSave={handleSaveAgentMsps}

@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -23,16 +23,8 @@ import {
     Calendar,
     RefreshCw
 } from 'lucide-react'
-
-// Mock customer data
-const mockCustomer = {
-    name: 'Rahul Verma',
-    slug: 'rahul-verma',
-    profileUrl: 'https://taponce.in/rahul-verma',
-    cardActivatedDate: '2026-01-05T10:00:00Z',
-    lastProfileUpdate: '2026-01-18T14:30:00Z',
-    status: 'active'
-}
+import { getCustomerByProfileId, Customer } from '@/lib/services/customers'
+import { createClient } from '@/lib/supabase/client'
 
 function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-IN', {
@@ -43,13 +35,52 @@ function formatDate(dateString: string): string {
 }
 
 export default function CustomerDashboardHome() {
+    const [loading, setLoading] = useState(true)
+    const [customer, setCustomer] = useState<Customer | null>(null)
     const [copied, setCopied] = useState(false)
-    const customer = mockCustomer
+
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const customerData = await getCustomerByProfileId(user.id)
+                setCustomer(customerData)
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [])
+
+    const profileUrl = customer ? `https://taponce.in/${customer.slug}` : ''
 
     const handleCopyUrl = () => {
-        navigator.clipboard.writeText(customer.profileUrl)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        if (profileUrl) {
+            navigator.clipboard.writeText(profileUrl)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading your dashboard...</div>
+            </div>
+        )
+    }
+
+    if (!customer) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Unable to load your profile</p>
+                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -58,12 +89,12 @@ export default function CustomerDashboardHome() {
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold mb-2">Hi {customer.name}!</h1>
+                        <h1 className="text-2xl font-bold mb-2">Hi {customer.fullName}!</h1>
                         <p className="text-white/80">Your card is active and ready to share.</p>
 
                         {/* Profile URL */}
                         <div className="mt-4 flex items-center gap-2 bg-white/10 rounded-lg p-3 max-w-md">
-                            <span className="text-sm truncate flex-1">{customer.profileUrl}</span>
+                            <span className="text-sm truncate flex-1">{profileUrl}</span>
                             <button
                                 onClick={handleCopyUrl}
                                 className="p-2 hover:bg-white/10 rounded transition-colors"
@@ -86,9 +117,9 @@ export default function CustomerDashboardHome() {
                         </div>
                     </div>
 
-                    <Badge className="bg-green-500 text-white">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Active
+                    <Badge className={customer.status === 'active' ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+                        {customer.status === 'active' && <CheckCircle className="w-3 h-3 mr-1" />}
+                        {customer.status === 'active' ? 'Active' : customer.status}
                     </Badge>
                 </div>
             </div>
@@ -100,9 +131,9 @@ export default function CustomerDashboardHome() {
                         <div className="p-2 rounded-lg bg-blue-100">
                             <Calendar className="w-5 h-5 text-blue-600" />
                         </div>
-                        <span className="text-sm text-muted-foreground">Card Activated</span>
+                        <span className="text-sm text-muted-foreground">Profile Created</span>
                     </div>
-                    <p className="text-xl font-bold">{formatDate(customer.cardActivatedDate)}</p>
+                    <p className="text-xl font-bold">{formatDate(customer.createdAt)}</p>
                 </div>
 
                 <div className="bg-white rounded-xl border p-5">
@@ -112,7 +143,7 @@ export default function CustomerDashboardHome() {
                         </div>
                         <span className="text-sm text-muted-foreground">Last Profile Update</span>
                     </div>
-                    <p className="text-xl font-bold">{formatDate(customer.lastProfileUpdate)}</p>
+                    <p className="text-xl font-bold">{formatDate(customer.updatedAt)}</p>
                 </div>
             </div>
 

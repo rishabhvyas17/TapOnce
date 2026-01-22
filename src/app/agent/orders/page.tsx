@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -30,95 +30,9 @@ import {
     X,
     Package
 } from 'lucide-react'
-
-// Mock orders data
-const mockOrders = [
-    {
-        id: '1',
-        orderNumber: 12050,
-        customerName: 'Rahul Verma',
-        customerPhone: '9876543210',
-        cardDesign: 'Vertical Blue Premium',
-        sellingPrice: 800,
-        commission: 200,
-        status: 'pending_approval',
-        createdAt: '2026-01-19T10:00:00Z',
-        isBelowMsp: false
-    },
-    {
-        id: '2',
-        orderNumber: 12049,
-        customerName: 'Priya Sharma',
-        customerPhone: '9876543211',
-        cardDesign: 'Horizontal Gold Elite',
-        sellingPrice: 750,
-        commission: 175,
-        status: 'approved',
-        createdAt: '2026-01-18T14:00:00Z',
-        isBelowMsp: false
-    },
-    {
-        id: '3',
-        orderNumber: 12048,
-        customerName: 'Amit Kumar',
-        customerPhone: '9876543212',
-        cardDesign: 'Minimal White Pro',
-        sellingPrice: 500,
-        commission: 0,
-        status: 'pending_approval',
-        createdAt: '2026-01-18T09:00:00Z',
-        isBelowMsp: true
-    },
-    {
-        id: '4',
-        orderNumber: 12045,
-        customerName: 'Neha Gupta',
-        customerPhone: '9876543213',
-        cardDesign: 'Vertical Blue Premium',
-        sellingPrice: 900,
-        commission: 250,
-        status: 'printing',
-        createdAt: '2026-01-17T16:00:00Z',
-        isBelowMsp: false
-    },
-    {
-        id: '5',
-        orderNumber: 12040,
-        customerName: 'Vikram Singh',
-        customerPhone: '9876543214',
-        cardDesign: 'Horizontal Gold Elite',
-        sellingPrice: 1000,
-        commission: 300,
-        status: 'delivered',
-        createdAt: '2026-01-15T11:00:00Z',
-        isBelowMsp: false
-    },
-    {
-        id: '6',
-        orderNumber: 12035,
-        customerName: 'Anita Reddy',
-        customerPhone: '9876543215',
-        cardDesign: 'Minimal White Pro',
-        sellingPrice: 650,
-        commission: 150,
-        status: 'paid',
-        createdAt: '2026-01-10T08:00:00Z',
-        isBelowMsp: false
-    },
-    {
-        id: '7',
-        orderNumber: 12030,
-        customerName: 'Suresh Patel',
-        customerPhone: '9876543216',
-        cardDesign: 'Vertical Blue Premium',
-        sellingPrice: 550,
-        commission: 0,
-        status: 'rejected',
-        createdAt: '2026-01-08T15:00:00Z',
-        isBelowMsp: true,
-        rejectionReason: 'Price below MSP not approved for this customer category'
-    },
-]
+import { getAgentByProfileId } from '@/lib/services/agents'
+import { getOrders, OrderListItem } from '@/lib/services/orders'
+import { createClient } from '@/lib/supabase/client'
 
 const statusConfig: Record<string, { label: string; color: string; icon: string }> = {
     pending_approval: { label: 'Pending Approval', color: 'bg-yellow-100 text-yellow-800', icon: '⚠️' },
@@ -160,13 +74,34 @@ function getTimeAgo(dateString: string): string {
 }
 
 export default function AgentOrdersPage() {
+    const [loading, setLoading] = useState(true)
+    const [orders, setOrders] = useState<OrderListItem[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState('all')
     const [dateFilter, setDateFilter] = useState('all')
 
-    // Filter orders
+    // Fetch orders for current agent
+    useEffect(() => {
+        async function fetchOrders() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const agent = await getAgentByProfileId(user.id)
+                if (agent) {
+                    const response = await getOrders({ agentId: agent.id })
+                    setOrders(response.orders)
+                }
+            }
+            setLoading(false)
+        }
+        fetchOrders()
+    }, [])
+
+    // Filter orders (client-side)
     const filteredOrders = useMemo(() => {
-        return mockOrders.filter(order => {
+        return orders.filter(order => {
             // Search filter
             const matchesSearch =
                 order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -189,7 +124,15 @@ export default function AgentOrdersPage() {
 
             return matchesSearch && matchesStatus && matchesDate
         })
-    }, [searchQuery, statusFilter, dateFilter])
+    }, [orders, searchQuery, statusFilter, dateFilter])
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading orders...</div>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">
@@ -267,7 +210,7 @@ export default function AgentOrdersPage() {
             ) : (
                 <div className="space-y-4">
                     {filteredOrders.map((order) => {
-                        const status = statusConfig[order.status]
+                        const status = statusConfig[order.status] || { label: order.status, color: 'bg-gray-100', icon: '📋' }
 
                         return (
                             <div
@@ -291,16 +234,11 @@ export default function AgentOrdersPage() {
                                                 )}
                                             </div>
                                             <p className="text-sm text-muted-foreground">
-                                                Order #{order.orderNumber} • {order.cardDesign}
+                                                Order #{order.orderNumber} • {order.cardDesign?.name || 'Unknown Design'}
                                             </p>
                                             <p className="text-xs text-muted-foreground mt-1">
                                                 {getTimeAgo(order.createdAt)}
                                             </p>
-                                            {order.status === 'rejected' && order.rejectionReason && (
-                                                <p className="text-xs text-red-600 mt-1">
-                                                    Reason: {order.rejectionReason}
-                                                </p>
-                                            )}
                                         </div>
                                     </div>
 
@@ -308,12 +246,12 @@ export default function AgentOrdersPage() {
                                     <div className="flex items-center gap-6">
                                         <div className="text-center">
                                             <p className="text-xs text-muted-foreground">Sale Price</p>
-                                            <p className="font-bold">{formatCurrency(order.sellingPrice)}</p>
+                                            <p className="font-bold">{formatCurrency(order.salePrice)}</p>
                                         </div>
                                         <div className="text-center">
                                             <p className="text-xs text-muted-foreground">Commission</p>
-                                            <p className={`font-bold ${order.commission > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                                                {order.commission > 0 ? formatCurrency(order.commission) : '—'}
+                                            <p className={`font-bold ${order.commissionAmount > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                                                {order.commissionAmount > 0 ? formatCurrency(order.commissionAmount) : '—'}
                                             </p>
                                         </div>
                                     </div>

@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import {
     FileText,
@@ -18,56 +18,90 @@ import {
     Download,
     CheckCircle
 } from 'lucide-react'
-
-// Mock profile data
-const mockProfile = {
-    fullName: 'Rahul Verma',
-    jobTitle: 'Founder & CEO',
-    companyName: 'Tech Solutions Pvt Ltd'
-}
+import { getCustomerByProfileId, Customer } from '@/lib/services/customers'
+import { createClient } from '@/lib/supabase/client'
 
 export default function DownloadPage() {
+    const [loading, setLoading] = useState(true)
+    const [customer, setCustomer] = useState<Customer | null>(null)
     const [downloading, setDownloading] = useState<string | null>(null)
     const [downloaded, setDownloaded] = useState<string[]>([])
-    const profile = mockProfile
+
+    // Fetch customer data
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+
+            if (user) {
+                const customerData = await getCustomerByProfileId(user.id)
+                setCustomer(customerData)
+            }
+            setLoading(false)
+        }
+        fetchData()
+    }, [])
 
     const handleDownload = async (type: 'pdf' | 'square' | 'landscape') => {
         setDownloading(type)
-        // Simulate download
+        // Simulate download - in production would generate actual files
         await new Promise(resolve => setTimeout(resolve, 1500))
         setDownloading(null)
         setDownloaded(prev => [...prev, type])
     }
 
-    const downloadOptions = [
-        {
-            id: 'pdf',
-            title: 'Download as PDF',
-            description: 'Formatted digital business card with all your contact info and social links.',
-            filename: `${profile.fullName.replace(/\s+/g, '_')}_SmartCard_Portfolio.pdf`,
-            icon: FileText,
-            color: 'text-red-500',
-            bgColor: 'bg-red-50'
-        },
-        {
-            id: 'square',
-            title: 'Square Image (1080×1080)',
-            description: 'Perfect for Instagram, WhatsApp profile, and social media posts.',
-            filename: `${profile.fullName.replace(/\s+/g, '_')}_SmartCard_Square.png`,
-            icon: ImageIcon,
-            color: 'text-purple-500',
-            bgColor: 'bg-purple-50'
-        },
-        {
-            id: 'landscape',
-            title: 'Landscape Image (1200×630)',
-            description: 'Ideal for LinkedIn posts, email signatures, and website banners.',
-            filename: `${profile.fullName.replace(/\s+/g, '_')}_SmartCard_Landscape.png`,
-            icon: ImageIcon,
-            color: 'text-blue-500',
-            bgColor: 'bg-blue-50'
-        }
-    ]
+    const downloadOptions = useMemo(() => {
+        const fullName = customer?.fullName || 'Profile'
+        return [
+            {
+                id: 'pdf',
+                title: 'Download as PDF',
+                description: 'Formatted digital business card with all your contact info and social links.',
+                filename: `${fullName.replace(/\s+/g, '_')}_SmartCard_Portfolio.pdf`,
+                icon: FileText,
+                color: 'text-red-500',
+                bgColor: 'bg-red-50'
+            },
+            {
+                id: 'square',
+                title: 'Square Image (1080×1080)',
+                description: 'Perfect for Instagram, WhatsApp profile, and social media posts.',
+                filename: `${fullName.replace(/\s+/g, '_')}_SmartCard_Square.png`,
+                icon: ImageIcon,
+                color: 'text-purple-500',
+                bgColor: 'bg-purple-50'
+            },
+            {
+                id: 'landscape',
+                title: 'Landscape Image (1200×630)',
+                description: 'Ideal for LinkedIn posts, email signatures, and website banners.',
+                filename: `${fullName.replace(/\s+/g, '_')}_SmartCard_Landscape.png`,
+                icon: ImageIcon,
+                color: 'text-blue-500',
+                bgColor: 'bg-blue-50'
+            }
+        ]
+    }, [customer])
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading...</div>
+            </div>
+        )
+    }
+
+    if (!customer) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Unable to load your profile</p>
+                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">

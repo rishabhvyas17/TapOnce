@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,70 +30,8 @@ import {
     XCircle,
     ArrowUpDown
 } from 'lucide-react'
-
-// Mock card designs with agent's personalized MSP
-const mockCardDesigns = [
-    {
-        id: '1',
-        name: 'Vertical Blue Premium',
-        description: 'Professional vertical design with blue gradient. Perfect for corporate executives and business owners.',
-        previewUrl: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&h=600&fit=crop',
-        msp: 600,
-        baseMsp: 600,
-        status: 'active',
-        totalSales: 42
-    },
-    {
-        id: '2',
-        name: 'Horizontal Gold Elite',
-        description: 'Premium horizontal card with elegant gold foil accents. Ideal for luxury brand representatives.',
-        previewUrl: 'https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=600&h=400&fit=crop',
-        msp: 800,
-        baseMsp: 800,
-        status: 'active',
-        totalSales: 28
-    },
-    {
-        id: '3',
-        name: 'Minimal White Pro',
-        description: 'Clean, minimalist design with subtle elegance. Great for creative professionals and designers.',
-        previewUrl: 'https://images.unsplash.com/photo-1541182388248-95b2e42f9eee?w=400&h=600&fit=crop',
-        msp: 550,
-        baseMsp: 550,
-        status: 'active',
-        totalSales: 35
-    },
-    {
-        id: '4',
-        name: 'Dark Mode Executive',
-        description: 'Sleek dark theme for the modern professional. Makes a bold statement.',
-        previewUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=600&fit=crop',
-        msp: 700,
-        baseMsp: 700,
-        status: 'active',
-        totalSales: 19
-    },
-    {
-        id: '5',
-        name: 'Corporate Classic',
-        description: 'Traditional business card styling with a modern NFC twist.',
-        previewUrl: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=400&h=600&fit=crop',
-        msp: 500,
-        baseMsp: 500,
-        status: 'out_of_stock',
-        totalSales: 15
-    },
-    {
-        id: '6',
-        name: 'Gradient Sunset',
-        description: 'Vibrant gradient design that stands out. Perfect for creative industries.',
-        previewUrl: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=400&h=600&fit=crop',
-        msp: 650,
-        baseMsp: 650,
-        status: 'active',
-        totalSales: 22
-    },
-]
+import { getCardDesigns } from '@/lib/services/catalog'
+import { CardDesign } from '@/types/card-design'
 
 function formatCurrency(amount: number): string {
     return new Intl.NumberFormat('en-IN', {
@@ -107,21 +45,31 @@ type SortOption = 'name_asc' | 'msp_low' | 'msp_high' | 'popular'
 
 export default function AgentCatalogPage() {
     const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [cardDesigns, setCardDesigns] = useState<CardDesign[]>([])
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState<'all' | 'active'>('active')
     const [sortBy, setSortBy] = useState<SortOption>('popular')
 
-    // Filter and sort cards
+    // Fetch card designs from Supabase
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true)
+            const { designs } = await getCardDesigns({
+                status: statusFilter === 'all' ? undefined : 'active'
+            })
+            setCardDesigns(designs)
+            setLoading(false)
+        }
+        fetchData()
+    }, [statusFilter])
+
+    // Filter and sort cards (client-side search and sort)
     const filteredCards = useMemo(() => {
-        let cards = mockCardDesigns.filter(card => {
-            // Search filter
+        let cards = cardDesigns.filter(card => {
             const matchesSearch = card.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                card.description.toLowerCase().includes(searchQuery.toLowerCase())
-
-            // Status filter
-            const matchesStatus = statusFilter === 'all' || card.status === 'active'
-
-            return matchesSearch && matchesStatus
+                (card.description || '').toLowerCase().includes(searchQuery.toLowerCase())
+            return matchesSearch
         })
 
         // Sort
@@ -130,10 +78,10 @@ export default function AgentCatalogPage() {
                 cards.sort((a, b) => a.name.localeCompare(b.name))
                 break
             case 'msp_low':
-                cards.sort((a, b) => a.msp - b.msp)
+                cards.sort((a, b) => a.baseMsp - b.baseMsp)
                 break
             case 'msp_high':
-                cards.sort((a, b) => b.msp - a.msp)
+                cards.sort((a, b) => b.baseMsp - a.baseMsp)
                 break
             case 'popular':
                 cards.sort((a, b) => b.totalSales - a.totalSales)
@@ -141,10 +89,18 @@ export default function AgentCatalogPage() {
         }
 
         return cards
-    }, [searchQuery, statusFilter, sortBy])
+    }, [cardDesigns, searchQuery, sortBy])
 
     const handleUseCard = (cardId: string) => {
         router.push(`/agent/orders/new?card=${cardId}`)
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-muted-foreground">Loading card catalog...</div>
+            </div>
+        )
     }
 
     return (
@@ -203,16 +159,22 @@ export default function AgentCatalogPage() {
                     {filteredCards.map((card) => (
                         <div
                             key={card.id}
-                            className={`bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-shadow ${card.status === 'out_of_stock' ? 'opacity-70' : ''
+                            className={`bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-shadow ${card.status === 'inactive' ? 'opacity-70' : ''
                                 }`}
                         >
                             {/* Card Preview Image */}
                             <div className="aspect-[3/4] relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                                <img
-                                    src={card.previewUrl}
-                                    alt={card.name}
-                                    className="w-full h-full object-cover"
-                                />
+                                {card.previewUrl ? (
+                                    <img
+                                        src={card.previewUrl}
+                                        alt={card.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <Package className="w-16 h-16 text-gray-300" />
+                                    </div>
+                                )}
 
                                 {/* Status Badge */}
                                 <div className="absolute top-3 right-3">
@@ -224,7 +186,7 @@ export default function AgentCatalogPage() {
                                     ) : (
                                         <Badge variant="secondary" className="bg-gray-100 text-gray-600">
                                             <XCircle className="w-3 h-3 mr-1" />
-                                            Out of Stock
+                                            Inactive
                                         </Badge>
                                     )}
                                 </div>
@@ -234,13 +196,13 @@ export default function AgentCatalogPage() {
                             <div className="p-4">
                                 <h3 className="font-semibold text-lg">{card.name}</h3>
                                 <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                    {card.description}
+                                    {card.description || 'No description available'}
                                 </p>
 
                                 {/* MSP Display */}
                                 <div className="mt-4 p-3 bg-green-50 rounded-lg">
                                     <p className="text-sm text-green-700">Your MSP</p>
-                                    <p className="text-2xl font-bold text-green-600">{formatCurrency(card.msp)}</p>
+                                    <p className="text-2xl font-bold text-green-600">{formatCurrency(card.baseMsp)}</p>
                                 </div>
 
                                 {/* Sales Info */}
@@ -251,12 +213,12 @@ export default function AgentCatalogPage() {
                                 {/* Action Button */}
                                 <Button
                                     className="w-full mt-4"
-                                    disabled={card.status === 'out_of_stock'}
+                                    disabled={card.status === 'inactive'}
                                     onClick={() => handleUseCard(card.id)}
                                 >
                                     <ShoppingCart className="w-4 h-4 mr-2" />
-                                    {card.status === 'out_of_stock'
-                                        ? 'Out of Stock'
+                                    {card.status === 'inactive'
+                                        ? 'Not Available'
                                         : 'Use This Card for Order'}
                                 </Button>
                             </div>

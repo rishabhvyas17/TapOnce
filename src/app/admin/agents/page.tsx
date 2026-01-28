@@ -13,10 +13,10 @@ import { AgentFilters } from '@/components/admin/AgentFilters'
 import { AgentDetailModal } from '@/components/admin/AgentDetailModal'
 import { CreateAgentModal } from '@/components/admin/CreateAgentModal'
 import { PayoutModal } from '@/components/admin/PayoutModal'
+import { PendingApplications } from '@/components/admin/PendingApplications'
 import { Agent, AgentStatus, CreateAgentPayload, PayoutPayload } from '@/types/agent'
-import { getAgents, updateAgentStatus, processPayout, AgentListItem } from '@/lib/services/agents'
-import { Users, IndianRupee, TrendingUp, Wallet } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { AgentApplication } from '@/types/agent-application'
+import { Users, IndianRupee, TrendingUp, Wallet, Loader2, RefreshCw } from 'lucide-react'
 
 // Transform AgentListItem to Agent type
 function transformAgent(item: AgentListItem): Agent {
@@ -50,9 +50,7 @@ function formatCurrency(amount: number): string {
 }
 
 export default function AdminAgentsPage() {
-    const router = useRouter()
     const [agents, setAgents] = useState<Agent[]>([])
-    const [total, setTotal] = useState(0)
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedStatus, setSelectedStatus] = useState<AgentStatus | null>(null)
@@ -62,17 +60,43 @@ export default function AdminAgentsPage() {
     const [payoutAgent, setPayoutAgent] = useState<Agent | null>(null)
     const [payoutModalOpen, setPayoutModalOpen] = useState(false)
 
-    // Fetch agents from Supabase
-    useEffect(() => {
-        async function fetchAgents() {
-            setLoading(true)
-            const response = await getAgents({
-                search: searchQuery || undefined,
-                status: selectedStatus || undefined
+    // Fetch agents from API on mount
+    const fetchAgents = async () => {
+        setLoading(true)
+        try {
+            const response = await fetch('/api/admin/agents', {
+                credentials: 'include'
             })
-            setAgents(response.agents.map(transformAgent))
-            setTotal(response.total)
+            if (response.ok) {
+                const data = await response.json()
+                setAgents(data.agents || [])
+            } else {
+                console.error('Failed to fetch agents')
+            }
+        } catch (err) {
+            console.error('Error fetching agents:', err)
+        } finally {
             setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchAgents()
+    }, [])
+
+    // Filtered agents
+    const filteredAgents = useMemo(() => {
+        let result = agents
+
+        // Search filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase()
+            result = result.filter(a =>
+                a.fullName.toLowerCase().includes(query) ||
+                a.email.toLowerCase().includes(query) ||
+                a.referralCode.toLowerCase().includes(query) ||
+                a.phone.includes(query)
+            )
         }
         fetchAgents()
     }, [searchQuery, selectedStatus])
@@ -227,6 +251,18 @@ export default function AdminAgentsPage() {
             {/* Results count */}
             <div className="mt-4 text-sm text-muted-foreground">
                 Showing {agents.length} of {total} agents
+            </div>
+
+            {/* Pending Applications Section */}
+            <div className="mt-6 bg-white border rounded-lg p-4">
+                <PendingApplications
+                    onApprove={(application: AgentApplication) => {
+                        // Open create modal pre-filled with application data
+                        setCreateModalOpen(true)
+                        // Note: You could pre-fill the create form here
+                        console.log('Approve application:', application)
+                    }}
+                />
             </div>
 
             {/* Modals */}

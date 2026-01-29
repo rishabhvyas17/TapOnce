@@ -171,8 +171,8 @@ export default function OrderSummary({ material, name, title, niche, templateId,
                     onClick={() => setStep('shipping')}
                     disabled={!name}
                     className={`w-full flex items-center justify-center gap-3 py-4 rounded-full font-bold text-lg transition-all ${name
-                            ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98]"
-                            : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                        ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98]"
+                        : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
                         }`}
                 >
                     Continue <ArrowRight className="h-5 w-5" />
@@ -297,8 +297,8 @@ export default function OrderSummary({ material, name, title, niche, templateId,
                     onClick={() => setStep('payment')}
                     disabled={!isContactValid || !isShippingValid}
                     className={`w-full flex items-center justify-center gap-3 py-4 rounded-full font-bold text-lg transition-all ${isContactValid && isShippingValid
-                            ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98]"
-                            : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                        ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98]"
+                        : "bg-zinc-800 text-zinc-500 cursor-not-allowed"
                         }`}
                 >
                     Continue to Payment <ArrowRight className="h-5 w-5" />
@@ -349,8 +349,8 @@ export default function OrderSummary({ material, name, title, niche, templateId,
                     <button
                         onClick={() => setPaymentMethod('cod')}
                         className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${paymentMethod === 'cod'
-                                ? 'border-violet-500 bg-violet-500/10'
-                                : 'border-white/10 hover:border-white/20'
+                            ? 'border-violet-500 bg-violet-500/10'
+                            : 'border-white/10 hover:border-white/20'
                             }`}
                     >
                         <Package className="h-6 w-6 text-violet-400" />
@@ -367,8 +367,8 @@ export default function OrderSummary({ material, name, title, niche, templateId,
                     <button
                         onClick={() => setPaymentMethod('online')}
                         className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${paymentMethod === 'online'
-                                ? 'border-violet-500 bg-violet-500/10'
-                                : 'border-white/10 hover:border-white/20'
+                            ? 'border-violet-500 bg-violet-500/10'
+                            : 'border-white/10 hover:border-white/20'
                             }`}
                     >
                         <CreditCard className="h-6 w-6 text-violet-400" />
@@ -475,6 +475,14 @@ export default function OrderSummary({ material, name, title, niche, templateId,
                     </div>
                 </div>
 
+                {/* Track Order CTA */}
+                <a
+                    href={`/order/track?order=${orderNumber}`}
+                    className="block w-full py-4 rounded-full font-bold text-lg bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98] transition-transform text-center"
+                >
+                    Track Your Order →
+                </a>
+
                 {/* What's Next */}
                 <div className="bg-zinc-900/30 rounded-xl p-4 text-left">
                     <h4 className="font-medium text-white mb-3">What happens next?</h4>
@@ -485,7 +493,7 @@ export default function OrderSummary({ material, name, title, niche, templateId,
                         </li>
                         <li className="flex items-start gap-2">
                             <Check className="h-4 w-4 text-emerald-400 mt-0.5" />
-                            <span>You'll receive your login credentials via email</span>
+                            <span>You'll receive an email to set up your profile</span>
                         </li>
                         <li className="flex items-start gap-2">
                             <Check className="h-4 w-4 text-emerald-400 mt-0.5" />

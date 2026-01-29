@@ -11,7 +11,6 @@ import { KanbanBoard } from '@/components/admin/KanbanBoard';
 import { KanbanColumn, KanbanOrder, OrderStatus } from '@/types/kanban';
 import { updateOrderStatus } from '@/lib/services/orders';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/use-toast';
 
 interface Agent {
     id: string;

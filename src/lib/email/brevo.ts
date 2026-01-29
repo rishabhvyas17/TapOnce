@@ -99,8 +99,10 @@ export function getOrderConfirmationEmail(params: {
     cardName: string
     total: number
     paymentMethod: 'cod' | 'online'
+    claimUrl?: string
+    trackingUrl?: string
 }): { subject: string; html: string } {
-    const { customerName, orderNumber, materialName, cardName, total, paymentMethod } = params
+    const { customerName, orderNumber, materialName, cardName, total, paymentMethod, claimUrl, trackingUrl } = params
 
     return {
         subject: `Order Confirmed #${orderNumber} - Your Smart Card is Being Prepared!`,
@@ -166,12 +168,34 @@ export function getOrderConfirmationEmail(params: {
                                     </td>
                                 </tr>
                             </table>
+
+                            <!-- Action Buttons -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
+                                ${claimUrl ? `
+                                <tr>
+                                    <td align="center" style="padding-bottom: 12px;">
+                                        <a href="${claimUrl}" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: white; padding: 16px 32px; border-radius: 99px; text-decoration: none; font-weight: bold; font-size: 16px;">
+                                            Set Up Your Profile →
+                                        </a>
+                                    </td>
+                                </tr>
+                                ` : ''}
+                                ${trackingUrl ? `
+                                <tr>
+                                    <td align="center">
+                                        <a href="${trackingUrl}" style="display: inline-block; background: transparent; color: #a1a1aa; padding: 12px 24px; border-radius: 99px; text-decoration: none; font-size: 14px; border: 1px solid #333;">
+                                            Track Your Order
+                                        </a>
+                                    </td>
+                                </tr>
+                                ` : ''}
+                            </table>
                             
                             <!-- What's Next -->
                             <h3 style="color: white; font-size: 16px; margin: 24px 0 16px 0;">What happens next?</h3>
                             <ul style="color: #a1a1aa; font-size: 14px; margin: 0; padding-left: 20px; line-height: 1.8;">
                                 <li>We'll review your order within 24 hours</li>
-                                <li>You'll receive your login credentials via email</li>
+                                <li>Set up your profile to customize your digital card</li>
                                 <li>Your card will be delivered in 5-7 business days</li>
                             </ul>
                         </td>

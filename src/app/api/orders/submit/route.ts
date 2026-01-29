@@ -141,6 +141,9 @@ export async function POST(request: NextRequest) {
             mspAtOrder = newDesign.base_msp
         }
 
+        // Generate unique claim token for account setup
+        const claimToken = generateClaimToken()
+
         // Create the order
         const orderData = {
             // Customer details
@@ -180,7 +183,11 @@ export async function POST(request: NextRequest) {
             },
 
             // Notes
-            special_instructions: `Material: ${payload.material.toUpperCase()}, Template: ${payload.templateName || payload.templateId}`
+            special_instructions: `Material: ${payload.material.toUpperCase()}, Template: ${payload.templateName || payload.templateId}`,
+
+            // Claim token for account setup
+            claim_token: claimToken,
+            claim_token_used: false
         }
 
         const { data: order, error } = await supabase
@@ -213,13 +220,20 @@ export async function POST(request: NextRequest) {
             wood: 'Eco Walnut'
         }
 
+        // Build URLs for email
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://taponce.in'
+        const claimUrl = `${baseUrl}/claim-account?token=${claimToken}`
+        const trackingUrl = `${baseUrl}/order/track`
+
         const emailData = getOrderConfirmationEmail({
             customerName: payload.customerName,
             orderNumber: order.order_number,
             materialName: materialNames[payload.material] || payload.material,
             cardName: payload.templateName || 'Custom Design',
             total: payload.salePrice,
-            paymentMethod: payload.paymentMethod
+            paymentMethod: payload.paymentMethod,
+            claimUrl,
+            trackingUrl
         })
 
         // Fire and forget - don't wait for email to complete
@@ -245,4 +259,14 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         )
     }
+}
+
+// Generate a secure random claim token
+function generateClaimToken(): string {
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
+    let token = ''
+    for (let i = 0; i < 32; i++) {
+        token += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return token
 }

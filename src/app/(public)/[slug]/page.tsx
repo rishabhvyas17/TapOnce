@@ -1,6 +1,6 @@
 /**
  * @file Public Tap View Page
- * @description Ultra-fast public profile page accessed via NFC tap
+ * @description Premium public profile page accessed via NFC tap
  * 
  * CRITICAL REQUIREMENTS:
  * - Load time <3s on 3G, <1.5s on 4G
@@ -10,8 +10,8 @@
 
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import PublicProfileClient from './PublicProfileClient'
-import { Profile, Profession } from '@/components/public-profile/types'
+import PremiumPublicProfile from '@/components/public-profile/PremiumPublicProfile'
+import { Profile, Profession, ThemePreset } from '@/components/public-profile/types'
 import { getCustomerBySlug } from '@/lib/services/customers'
 import { Customer } from '@/types/customer'
 
@@ -22,20 +22,37 @@ interface PageProps {
 // Transform Customer to Profile type
 function customerToProfile(customer: Customer): Profile {
     return {
+        // Basic Info
         fullName: customer.fullName,
         jobTitle: customer.jobTitle || '',
         companyName: customer.company,
+        tagline: customer.tagline,
         bio: customer.bio,
         photo: customer.avatarUrl,
+        location: customer.location,
+
+        // Contact
         phone: customer.phone,
         email: customer.email,
         whatsapp: customer.whatsapp,
+
+        // Social Links
         linkedIn: customer.linkedinUrl,
         instagram: customer.instagramUrl,
         twitter: customer.twitterUrl,
         facebook: customer.facebookUrl,
         website: customer.websiteUrl,
-        profession: 'other' as Profession,
+
+        // Profession & Theme
+        profession: (customer.profession as Profession) || 'other',
+        themePreset: (customer.themePreset as ThemePreset) || 'midnight',
+        accentColor: customer.accentColor,
+
+        // Custom CTA
+        ctaText: customer.ctaText,
+        ctaUrl: customer.ctaUrl,
+
+        // Status
         status: customer.status === 'active' ? 'active' : 'inactive'
     }
 }
@@ -48,13 +65,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         return { title: 'Profile Not Found | TapOnce' }
     }
 
+    const description = customer.tagline || customer.jobTitle
+        ? `${customer.tagline || customer.jobTitle}${customer.company ? ` at ${customer.company}` : ''}`
+        : customer.bio?.slice(0, 120) || 'Professional profile on TapOnce'
+
     return {
         title: `${customer.fullName} | TapOnce`,
-        description: `${customer.jobTitle || ''} at ${customer.company || 'TapOnce'}. ${customer.bio?.slice(0, 100) || ''}`,
+        description,
         openGraph: {
             title: customer.fullName,
-            description: `${customer.jobTitle || ''} at ${customer.company || 'TapOnce'}`,
+            description,
             images: customer.avatarUrl ? [customer.avatarUrl] : [],
+            type: 'profile'
+        },
+        twitter: {
+            card: 'summary',
+            title: customer.fullName,
+            description
         }
     }
 }
@@ -68,5 +95,5 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
     const profile = customerToProfile(customer)
 
-    return <PublicProfileClient profile={profile} slug={params.slug} />
+    return <PremiumPublicProfile profile={profile} slug={params.slug} />
 }

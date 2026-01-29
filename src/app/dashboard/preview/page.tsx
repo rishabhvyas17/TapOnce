@@ -25,7 +25,8 @@ import {
     ArrowLeft,
     Share2
 } from 'lucide-react'
-import { getCustomerByProfileId, Customer } from '@/lib/services/customers'
+import { getCustomerByProfileId } from '@/lib/services/customers'
+import { Customer } from '@/types/customer'
 import { createClient } from '@/lib/supabase/client'
 
 export default function PreviewPage() {

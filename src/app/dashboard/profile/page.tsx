@@ -31,7 +31,8 @@ import {
     CheckCircle,
     Eye
 } from 'lucide-react'
-import { getCustomerByProfileId, updateCustomerProfile, Customer } from '@/lib/services/customers'
+import { getCustomerByProfileId, updateCustomerProfile } from '@/lib/services/customers'
+import { Customer } from '@/types/customer'
 import { createClient } from '@/lib/supabase/client'
 
 export default function ProfileEditorPage() {

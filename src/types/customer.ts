@@ -35,8 +35,10 @@ export interface Customer {
     fullName: string
     company?: string
     jobTitle?: string
+    tagline?: string
     bio?: string
     avatarUrl?: string
+    location?: string
 
     // Contact
     phone: string
@@ -50,6 +52,13 @@ export interface Customer {
     twitterUrl?: string
     websiteUrl?: string
     customLinks: CustomLink[]
+
+    // Profile customization
+    profession?: string
+    themePreset?: string
+    accentColor?: string
+    ctaText?: string
+    ctaUrl?: string
 
     // Status
     status: CustomerStatus
@@ -87,8 +96,10 @@ export interface UpdateCustomerPayload {
     fullName?: string
     jobTitle?: string
     company?: string
+    tagline?: string
     bio?: string
     avatarUrl?: string
+    location?: string
     phone?: string
     email?: string
     whatsapp?: string
@@ -98,6 +109,11 @@ export interface UpdateCustomerPayload {
     twitterUrl?: string
     websiteUrl?: string
     customLinks?: CustomLink[]
+    profession?: string
+    themePreset?: string
+    accentColor?: string
+    ctaText?: string
+    ctaUrl?: string
 }
 
 /**

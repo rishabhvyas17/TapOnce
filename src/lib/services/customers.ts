@@ -199,7 +199,9 @@ export async function getCustomerBySlug(slug: string): Promise<Customer | null> 
         avatarUrl: data.profiles?.avatar_url,
         company: data.company,
         jobTitle: data.job_title,
+        tagline: data.tagline,
         bio: data.bio,
+        location: data.location,
         whatsapp: data.whatsapp,
         linkedinUrl: data.linkedin_url,
         instagramUrl: data.instagram_url,
@@ -207,6 +209,11 @@ export async function getCustomerBySlug(slug: string): Promise<Customer | null> 
         twitterUrl: data.twitter_url,
         websiteUrl: data.website_url,
         customLinks: data.custom_links || [],
+        profession: data.profession,
+        themePreset: data.theme_preset,
+        accentColor: data.accent_color,
+        ctaText: data.cta_text,
+        ctaUrl: data.cta_url,
         status: data.status,
         createdAt: data.created_at,
         updatedAt: data.updated_at
@@ -247,7 +254,9 @@ export async function getCustomerByProfileId(profileId: string): Promise<Custome
         avatarUrl: data.profiles?.avatar_url,
         company: data.company,
         jobTitle: data.job_title,
+        tagline: data.tagline,
         bio: data.bio,
+        location: data.location,
         whatsapp: data.whatsapp,
         linkedinUrl: data.linkedin_url,
         instagramUrl: data.instagram_url,
@@ -255,6 +264,11 @@ export async function getCustomerByProfileId(profileId: string): Promise<Custome
         twitterUrl: data.twitter_url,
         websiteUrl: data.website_url,
         customLinks: data.custom_links || [],
+        profession: data.profession,
+        themePreset: data.theme_preset,
+        accentColor: data.accent_color,
+        ctaText: data.cta_text,
+        ctaUrl: data.cta_url,
         status: data.status,
         createdAt: data.created_at,
         updatedAt: data.updated_at
@@ -268,7 +282,9 @@ export interface UpdateCustomerPayload {
     fullName?: string
     jobTitle?: string
     company?: string
+    tagline?: string
     bio?: string
+    location?: string
     phone?: string
     whatsapp?: string
     linkedinUrl?: string
@@ -277,6 +293,11 @@ export interface UpdateCustomerPayload {
     twitterUrl?: string
     websiteUrl?: string
     avatarUrl?: string
+    profession?: string
+    themePreset?: string
+    accentColor?: string
+    ctaText?: string
+    ctaUrl?: string
 }
 
 export async function updateCustomerProfile(
@@ -289,13 +310,20 @@ export async function updateCustomerProfile(
 
     if (payload.jobTitle !== undefined) updateData.job_title = payload.jobTitle
     if (payload.company !== undefined) updateData.company = payload.company
+    if (payload.tagline !== undefined) updateData.tagline = payload.tagline
     if (payload.bio !== undefined) updateData.bio = payload.bio
+    if (payload.location !== undefined) updateData.location = payload.location
     if (payload.whatsapp !== undefined) updateData.whatsapp = payload.whatsapp
     if (payload.linkedinUrl !== undefined) updateData.linkedin_url = payload.linkedinUrl
     if (payload.instagramUrl !== undefined) updateData.instagram_url = payload.instagramUrl
     if (payload.facebookUrl !== undefined) updateData.facebook_url = payload.facebookUrl
     if (payload.twitterUrl !== undefined) updateData.twitter_url = payload.twitterUrl
     if (payload.websiteUrl !== undefined) updateData.website_url = payload.websiteUrl
+    if (payload.profession !== undefined) updateData.profession = payload.profession
+    if (payload.themePreset !== undefined) updateData.theme_preset = payload.themePreset
+    if (payload.accentColor !== undefined) updateData.accent_color = payload.accentColor
+    if (payload.ctaText !== undefined) updateData.cta_text = payload.ctaText
+    if (payload.ctaUrl !== undefined) updateData.cta_url = payload.ctaUrl
 
     const { error } = await supabase
         .from('customers')

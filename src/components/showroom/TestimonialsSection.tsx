@@ -71,12 +71,12 @@ export default function TestimonialsSection() {
         center: {
             x: 0,
             opacity: 1,
-            transition: { duration: 0.4, ease: "easeOut" }
+            transition: { duration: 0.4, ease: "easeOut" as const }
         },
         exit: (dir: number) => ({
             x: dir < 0 ? 100 : -100,
             opacity: 0,
-            transition: { duration: 0.3, ease: "easeIn" }
+            transition: { duration: 0.3, ease: "easeIn" as const }
         })
     }
 

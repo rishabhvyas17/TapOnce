@@ -1,122 +1,131 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Check } from "lucide-react"
-import React, { useState } from "react"
+import { Check, ArrowRight } from "lucide-react"
+import React from "react"
+import Image from "next/image"
+import Link from "next/link"
 
 const products = [
     {
         id: "metal",
         name: "Matte Black Metal",
-        price: "$49.99",
-        description: "The ultimate statement. Laser-engraved stainless steel with a premium matte finish. Heavy, durable, and unforgettable.",
-        features: ["Stainless Steel Core", "Laser Engraving", "Matte Anti-Fingerprint", "Lifetime Warranty"],
-        color: "bg-zinc-900 border-zinc-700",
-        texture: "linear-gradient(45deg, #111 0%, #222 100%)"
+        price: "₹1,500",
+        originalPrice: "₹2,499",
+        image: "/images/metal-card.png",
+        description: "The ultimate statement of premium networking. Crafted from military-grade stainless steel with a luxurious matte finish and precision laser engraving. Weighted, durable, and completely unforgettable.",
+        features: [
+            "Premium laser-engraved details",
+            "Stainless steel core (15g weighted feel)",
+            "Anti-fingerprint matte coating",
+            "High-range NTAG213 NFC chip",
+            "Lifetime chip warranty"
+        ],
+        badge: "Premium Choice"
     },
     {
-        id: "wood",
-        name: "Eco Walnut",
-        price: "$39.99",
-        description: "Review nature with technology. Real walnut wood finish containing an embedded NFC chip. Sustainable luxury.",
-        features: ["Real Walnut Wood", "FSC Certified", "Unique Grain Pattern", " biodegradable"],
-        color: "bg-amber-900 border-amber-800",
-        texture: "url('https://grainy-gradients.vercel.app/noise.svg')" // Placeholder for wood texture
-    },
-    {
-        id: "custom",
-        name: "Custom PVC",
-        price: "$29.99",
-        description: "Your brand, front and center. Full color printing edge-to-edge. Perfect for teams and corporate identity.",
-        features: ["Full Color Print", "Durable PVC", "Gloss or Matte", "Bulk Discounts"],
-        color: "bg-blue-600 border-blue-500",
-        texture: "linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)"
+        id: "pvc",
+        name: "Custom PVC Card",
+        price: "₹1,000",
+        originalPrice: "₹1,799",
+        image: "/images/pvc-card.png",
+        description: "Designed for modern professionals and teams. Made from highly durable, eco-friendly recycled PVC. Supports edge-to-edge high-fidelity matte color printing to match your brand's unique identity perfectly.",
+        features: [
+            "High-fidelity full-color print",
+            "Premium matte eco-friendly PVC",
+            "Waterproof & scratch-resistant",
+            "Instant QR back-up code",
+            "One-tap digital profile sync"
+        ],
+        badge: "Best Value"
     }
 ]
 
 export default function ProductCollection() {
-    const [selected, setSelected] = useState(products[0])
-
     return (
-        <section id="collection" className="py-24 bg-[#050505] text-white">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4">The Collection</h2>
-                    <p className="text-zinc-400 max-w-lg mx-auto">Choose the material that speaks your language.</p>
+        <section id="collection" className="py-20 lg:py-28 bg-background border-t border-white/[0.04]">
+            <div className="container mx-auto px-4 max-w-5xl">
+                {/* Header */}
+                <div className="text-center mb-16 max-w-2xl mx-auto">
+                    <span className="inline-block text-[11px] font-bold tracking-[0.2em] text-primary uppercase mb-3">
+                        The Collection
+                    </span>
+                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-white mb-4">
+                        Choose your material
+                    </h2>
+                    <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
+                        Whether you want the heavy prestige of laser-etched metal or the vibrant color profile of PVC, we have the perfect card for you.
+                    </p>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    {/* Visualizer */}
-                    <div className="relative h-[400px] md:h-[500px] flex items-center justify-center bg-[#0a0a0a] rounded-3xl border border-white/5 overflow-hidden">
-                        <motion.div
-                            key={selected.id}
-                            initial={{ opacity: 0, scale: 0.9, rotateY: -20 }}
-                            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className={`relative w-[300px] h-[188px] md:w-[400px] md:h-[250px] rounded-xl shadow-2xl ${selected.color}`}
-                            style={{ background: selected.texture }}
+                {/* Grid */}
+                <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
+                    {products.map((product) => (
+                        <div 
+                            key={product.id}
+                            className="group relative flex flex-col justify-between rounded-2xl bg-zinc-900/30 border border-white/[0.05] p-6 lg:p-8 hover:border-white/[0.1] hover:bg-zinc-900/50 transition-all duration-300 overflow-hidden"
                         >
-                            <div className="absolute inset-0 p-8 flex flex-col justify-between">
-                                <div className="h-8 w-8 rounded bg-white/20" />
-                                <div className="space-y-2">
-                                    <div className="h-4 w-32 bg-white/20 rounded" />
-                                    <div className="h-3 w-20 bg-white/10 rounded" />
+                            {/* Card Glow Effect */}
+                            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-primary/5 blur-[50px] pointer-events-none -z-10" />
+
+                            <div>
+                                {/* Product Image Frame */}
+                                <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden border border-white/[0.08] mb-6 bg-zinc-950">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.name}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        className="object-cover object-center group-hover:scale-102 transition-transform duration-500"
+                                    />
+                                    {/* Badge */}
+                                    <div className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase bg-black/80 backdrop-blur-md text-white border border-white/[0.1] rounded-full">
+                                        {product.badge}
+                                    </div>
                                 </div>
+
+                                {/* Typography */}
+                                <div className="flex items-baseline justify-between mb-3">
+                                    <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white">
+                                        {product.name}
+                                    </h3>
+                                    <div className="text-right">
+                                        <span className="text-lg md:text-xl font-bold text-white">{product.price}</span>
+                                        <span className="text-xs text-zinc-500 line-through ml-1.5">{product.originalPrice}</span>
+                                    </div>
+                                </div>
+
+                                <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-normal">
+                                    {product.description}
+                                </p>
+
+                                {/* Features List */}
+                                <ul className="space-y-3 mb-8">
+                                    {product.features.map((feature, idx) => (
+                                        <li key={idx} className="flex items-start gap-2.5 text-zinc-300 text-sm">
+                                            <div className="h-5 w-5 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary mt-0.5">
+                                                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                                            </div>
+                                            <span className="font-normal">{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
 
-                            {/* Material Sheen */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-xl pointer-events-none" />
-                        </motion.div>
-                    </div>
-
-                    {/* Selector */}
-                    <div className="space-y-8">
-                        <div className="flex gap-4 overflow-x-auto pb-4">
-                            {products.map((p) => (
-                                <button
-                                    key={p.id}
-                                    onClick={() => setSelected(p)}
-                                    className={`relative px-6 py-4 rounded-xl border transition-all text-left min-w-[160px] ${selected.id === p.id
-                                            ? "bg-white/10 border-violet-500"
-                                            : "bg-zinc-900/50 border-white/5 hover:bg-zinc-900"
-                                        }`}
-                                >
-                                    <div className="font-bold text-lg mb-1">{p.name}</div>
-                                    <div className="text-sm text-zinc-400">{p.price}</div>
-                                    {selected.id === p.id && (
-                                        <motion.div layoutId="active-ring" className="absolute inset-0 border-2 border-violet-500 rounded-xl" />
-                                    )}
-                                </button>
-                            ))}
+                            {/* CTA */}
+                            <Link
+                                href="/order"
+                                className={`group flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-semibold transition-all active:scale-[0.98]
+                                    ${product.id === 'metal'
+                                        ? 'bg-white text-black hover:bg-zinc-100 shadow-md shadow-white/5'
+                                        : 'bg-zinc-800 text-white hover:bg-zinc-700 border border-white/[0.06]'
+                                    }`}
+                            >
+                                Order {product.name}
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                            </Link>
                         </div>
-
-                        <motion.div
-                            key={selected.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="space-y-6"
-                        >
-                            <h3 className="text-2xl font-bold">{selected.name}</h3>
-                            <p className="text-zinc-400 leading-relaxed text-lg">
-                                {selected.description}
-                            </p>
-
-                            <ul className="grid grid-cols-2 gap-4">
-                                {selected.features.map((f) => (
-                                    <li key={f} className="flex items-center gap-2 text-zinc-300">
-                                        <div className="h-5 w-5 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-400">
-                                            <Check size={12} />
-                                        </div>
-                                        {f}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <button className="w-full md:w-auto px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-zinc-200 transition-colors mt-4">
-                                Buy {selected.name}
-                            </button>
-                        </motion.div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>

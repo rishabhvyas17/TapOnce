@@ -1,98 +1,62 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowRight, Shield, Truck, RotateCcw } from "lucide-react"
+import { ArrowRight, Shield, Truck, Sparkles } from "lucide-react"
 import Link from "next/link"
 import React from "react"
 
 const trustBadges = [
-    { icon: Truck, label: "Free Shipping" },
-    { icon: RotateCcw, label: "30-Day Returns" },
-    { icon: Shield, label: "Lifetime Warranty" }
+    { icon: Truck, label: "Free Shipping India-wide" },
+    { icon: Sparkles, label: "Cash on Delivery Available" },
+    { icon: Shield, label: "Lifetime Chip Warranty" }
 ]
 
 export default function FinalCTA() {
     return (
-        <section className="py-32 bg-[#030303] relative overflow-hidden">
-            {/* Dramatic Background */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[600px] bg-gradient-to-r from-violet-600/10 via-purple-600/5 to-cyan-600/10 rounded-full blur-[150px]" />
+        <section className="py-20 lg:py-28 bg-background relative overflow-hidden border-t border-white/[0.04]">
+            {/* Ambient glow behind */}
+            <div className="absolute inset-0 pointer-events-none opacity-20">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-primary/15 rounded-full blur-[130px]" />
             </div>
 
-            <div className="container mx-auto px-4 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="max-w-4xl mx-auto text-center"
-                >
-                    {/* Main Headline */}
-                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-[1.1]">
-                        Ready to Make Every{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-purple-400 to-cyan-400">
-                            Introduction Count?
+            <div className="container mx-auto px-4 relative z-10 max-w-5xl">
+                <div className="max-w-3xl mx-auto text-center space-y-10">
+                    {/* Headline */}
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight text-white leading-[1.1]">
+                        Ready to elevate your{" "}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-400 to-indigo-300">
+                            first impression?
                         </span>
                     </h2>
 
-                    <p className="text-xl text-zinc-400 mb-12 max-w-2xl mx-auto">
-                        Join thousands of professionals who have upgraded their first impression.
-                        Your premium card ships in 48 hours.
+                    <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-xl mx-auto font-normal">
+                        Join modern professionals upgrading their networking. Design your custom NFC card now and start sharing with one simple tap.
                     </p>
 
                     {/* CTA Button */}
-                    <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="inline-block mb-12"
-                    >
+                    <div className="inline-block">
                         <Link
                             href="/order"
-                            className="group relative inline-flex items-center gap-3 bg-white text-black px-12 py-6 rounded-full text-xl font-bold transition-all hover:bg-zinc-100"
+                            className="group flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-zinc-100 transition-all active:scale-[0.98] shadow-lg shadow-white/5"
                         >
                             Get Your Card Now
-                            <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
-
-                            {/* Glow Effect */}
-                            <div className="absolute inset-0 rounded-full bg-white/50 blur-xl opacity-0 group-hover:opacity-50 transition-opacity -z-10" />
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                         </Link>
-                    </motion.div>
+                    </div>
 
                     {/* Trust Badges */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2, duration: 0.5 }}
-                        className="flex flex-wrap justify-center gap-8"
-                    >
+                    <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8 pt-8 border-t border-white/[0.06]">
                         {trustBadges.map((badge, index) => (
                             <div
                                 key={index}
                                 className="flex items-center gap-2 text-zinc-400"
                             >
-                                <badge.icon className="h-5 w-5 text-emerald-400" />
-                                <span className="text-sm font-medium">{badge.label}</span>
+                                <badge.icon className="h-4 w-4 text-primary" />
+                                <span className="text-xs font-semibold uppercase tracking-wider">{badge.label}</span>
                             </div>
                         ))}
-                    </motion.div>
-
-                    {/* Secondary Action */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.4, duration: 0.5 }}
-                        className="mt-8"
-                    >
-                        <Link
-                            href="#how-it-works"
-                            className="text-sm text-zinc-500 hover:text-white transition-colors underline underline-offset-4"
-                        >
-                            Still have questions? See how it works →
-                        </Link>
-                    </motion.div>
-                </motion.div>
+                    </div>
+                </div>
             </div>
         </section>
     )

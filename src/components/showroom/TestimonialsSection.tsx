@@ -81,17 +81,20 @@ export default function TestimonialsSection() {
     }
 
     return (
-        <section className="py-20 lg:py-28 bg-background border-t border-white/[0.04] overflow-hidden">
-            <div className="container mx-auto px-4 max-w-5xl">
+        <section className="py-20 lg:py-28 bg-zinc-50/30 border-b border-zinc-100 overflow-hidden">
+            {/* Tech grid texture background */}
+            <div className="absolute inset-0 z-0 bg-[url('/grid.svg')] opacity-[0.02] pointer-events-none" />
+
+            <div className="container mx-auto px-4 max-w-5xl relative z-10">
                 {/* Header */}
-                <div className="text-center mb-16 max-w-2xl mx-auto">
-                    <span className="inline-block text-[11px] font-bold tracking-[0.2em] text-primary uppercase mb-3">
-                        Testimonials
+                <div className="text-center mb-16 max-w-2xl mx-auto space-y-3">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-zinc-50 border border-zinc-200/80 text-[10px] font-mono font-bold tracking-wider text-zinc-500 uppercase">
+                        [TESTIMONIALS]
                     </span>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-white mb-4">
+                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-slate-900">
                         Loved by professionals
                     </h2>
-                    <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
+                    <p className="text-zinc-500 text-sm md:text-base leading-relaxed">
                         Hear from real users who have transformed their networking and business introductions.
                     </p>
                 </div>
@@ -103,9 +106,7 @@ export default function TestimonialsSection() {
                     onMouseLeave={() => setIsHovered(false)}
                 >
                     {/* Main Testimonial Card */}
-                    <div className="relative bg-zinc-900/30 border border-white/[0.05] rounded-2xl p-8 md:p-10 min-h-[280px] sm:min-h-[240px] flex flex-col justify-between overflow-hidden">
-                        {/* Glow effect */}
-                        <div className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-primary/5 blur-[40px] pointer-events-none" />
+                    <div className="relative bg-white border border-zinc-200/60 rounded-2xl p-8 md:p-10 min-h-[260px] sm:min-h-[220px] flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         
                         <AnimatePresence initial={false} custom={direction} mode="wait">
                             <motion.div
@@ -121,26 +122,26 @@ export default function TestimonialsSection() {
                                     {/* Star Rating */}
                                     <div className="flex gap-1 mb-4">
                                         {[...Array(testimonials[current].rating)].map((_, i) => (
-                                            <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                                            <Star key={i} className="h-4 w-4 fill-amber-500 text-amber-500" strokeWidth={0} />
                                         ))}
                                     </div>
 
                                     {/* Quote Text */}
-                                    <p className="text-base sm:text-lg text-zinc-200 leading-relaxed font-normal">
+                                    <p className="text-base text-slate-850 leading-relaxed font-normal">
                                         &ldquo;{testimonials[current].content}&rdquo;
                                     </p>
                                 </div>
 
                                 {/* User Profile */}
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr from-primary to-indigo-500 flex items-center justify-center font-bold text-white text-xs select-none">
+                                    <div className="h-9 w-9 shrink-0 rounded-full bg-primary flex items-center justify-center font-bold text-white text-[10px] select-none">
                                         {testimonials[current].avatar}
                                     </div>
                                     <div>
-                                        <div className="font-semibold text-white text-sm">
+                                        <div className="font-bold text-slate-900 text-xs tracking-tight">
                                             {testimonials[current].name}
                                         </div>
-                                        <div className="text-xs text-zinc-500">
+                                        <div className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider font-mono">
                                             {testimonials[current].role}
                                         </div>
                                     </div>
@@ -151,15 +152,17 @@ export default function TestimonialsSection() {
 
                     {/* Left/Right Controls (Desktop only) */}
                     <button
+                        type="button"
                         onClick={slidePrev}
-                        className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 items-center justify-center rounded-full bg-zinc-900 border border-white/[0.05] text-zinc-400 hover:text-white hover:border-white/[0.1] active:scale-95 transition-all"
+                        className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 items-center justify-center rounded-full bg-white border border-zinc-200 text-zinc-400 hover:text-slate-900 hover:border-zinc-350 active:scale-95 transition-all shadow-sm"
                         aria-label="Previous testimonial"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
+                        type="button"
                         onClick={slideNext}
-                        className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 items-center justify-center rounded-full bg-zinc-900 border border-white/[0.05] text-zinc-400 hover:text-white hover:border-white/[0.1] active:scale-95 transition-all"
+                        className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 items-center justify-center rounded-full bg-white border border-zinc-200 text-zinc-400 hover:text-slate-900 hover:border-zinc-350 active:scale-95 transition-all shadow-sm"
                         aria-label="Next testimonial"
                     >
                         <ChevronRight className="w-5 h-5" />
@@ -171,11 +174,12 @@ export default function TestimonialsSection() {
                     {testimonials.map((_, i) => (
                         <button
                             key={i}
+                            type="button"
                             onClick={() => {
                                 setDirection(i > current ? 1 : -1)
                                 setCurrent(i)
                             }}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? "w-6 bg-primary" : "w-1.5 bg-zinc-700 hover:bg-zinc-500"
+                            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? "w-6 bg-primary" : "w-1.5 bg-zinc-300 hover:bg-zinc-450"
                                 }`}
                             aria-label={`Go to testimonial ${i + 1}`}
                         />

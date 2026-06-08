@@ -19,8 +19,8 @@ interface TemplateCardPreviewProps {
 }
 
 const materialOverlays = {
-    metal: "bg-[url('/noise.svg')] opacity-30",
-    pvc: "bg-[url('/noise.svg')] opacity-10"
+    metal: "bg-[url('/noise.svg')] opacity-35",
+    pvc: "bg-[url('/noise.svg')] opacity-[0.12]"
 }
 
 const fontFamilies: Record<string, string> = {
@@ -67,8 +67,8 @@ export default function TemplateCardPreview({
     if (!template) {
         return (
             <div className="relative perspective-1000">
-                <div className="relative w-[320px] h-[200px] md:w-[400px] md:h-[250px] rounded-2xl border border-dashed border-white/[0.08] flex items-center justify-center bg-zinc-950">
-                    <p className="text-zinc-500 text-xs text-center leading-relaxed font-normal">
+                <div className="relative w-[320px] h-[200px] md:w-[400px] md:h-[250px] rounded-2xl border border-dashed border-zinc-200 flex items-center justify-center bg-zinc-50">
+                    <p className="text-zinc-400 text-xs text-center leading-relaxed font-normal">
                         Select a template<br />to preview your custom design
                     </p>
                 </div>
@@ -82,14 +82,14 @@ export default function TemplateCardPreview({
     return (
         <div className="relative perspective-1000">
             {/* Glow Behind */}
-            <div className={`absolute -inset-8 bg-gradient-to-br ${template.gradient} blur-[60px] opacity-30 rounded-full`} />
+            <div className={`absolute -inset-8 bg-gradient-to-br ${template.gradient} blur-[60px] opacity-25 rounded-full`} />
 
             {/* Card */}
             <motion.div
                 initial={{ rotateY: 0, rotateX: 0 }}
                 whileHover={{ rotateY: 8, rotateX: -4, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                className="relative w-[320px] h-[200px] md:w-[400px] md:h-[250px] rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden preserve-3d cursor-pointer bg-zinc-950"
+                className="relative w-[320px] h-[200px] md:w-[400px] md:h-[250px] rounded-2xl border border-zinc-200/80 shadow-2xl overflow-hidden preserve-3d cursor-pointer bg-zinc-950"
             >
                 {/* Background Gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${template.gradient}`} />
@@ -107,7 +107,7 @@ export default function TemplateCardPreview({
                                 <IconComponent className={`h-5 w-5 ${accent.text}`} />
                             </div>
                         ) : (
-                            <div className="h-12 w-12 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center overflow-hidden">
+                            <div className="h-12 w-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                 {logoUrl ? (
                                     <img src={logoUrl} alt="Logo preview" className="w-full h-full object-contain p-1.5" />
                                 ) : (
@@ -150,7 +150,7 @@ export default function TemplateCardPreview({
 
                     {/* Watermark Icon */}
                     {template.iconPosition === "watermark" && (
-                        <div className="absolute right-4 bottom-4 opacity-[0.04] pointer-events-none">
+                        <div className="absolute right-4 bottom-4 opacity-[0.05] pointer-events-none">
                             <IconComponent className="h-20 w-20 text-white" />
                         </div>
                     )}
@@ -164,7 +164,7 @@ export default function TemplateCardPreview({
                 </div>
 
                 {/* Template Label */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[8px] text-white/40 tracking-widest uppercase font-semibold">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 text-[8px] text-white/50 tracking-widest uppercase font-semibold">
                     {template.name}
                 </div>
 
@@ -178,7 +178,7 @@ export default function TemplateCardPreview({
             </motion.div>
 
             {/* Reflection */}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-gradient-to-b from-white/[0.02] to-transparent blur-lg rounded-full pointer-events-none" />
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-gradient-to-b from-slate-900/[0.04] to-transparent blur-lg rounded-full pointer-events-none" />
         </div>
     )
 }

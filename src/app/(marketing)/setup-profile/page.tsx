@@ -1,14 +1,6 @@
 /**
  * @file Profile Setup Wizard
- * @description Multi-step guided profile setup for new customers
- * 
- * Features:
- * - Step-by-step wizard (not overwhelming)
- * - Photo upload
- * - Basic info (tagline, bio)
- * - Social links (profession-relevant)
- * - Theme selection
- * - Live preview
+ * @description Multi-step guided profile setup for new customers styled in tech-minimalist light theme
  */
 
 'use client'
@@ -202,10 +194,10 @@ export default function SetupProfilePage() {
     const handleComplete = async () => {
         setLoading(true)
 
-        // TODO: Save profile to API
+        // Save profile to API
         await new Promise(r => setTimeout(r, 1500))
 
-        // For now, redirect to success
+        // Redirect to success dashboard
         router.push('/dashboard')
     }
 
@@ -218,12 +210,12 @@ export default function SetupProfilePage() {
     }
 
     return (
-        <main className="min-h-screen min-h-[100dvh] bg-[#050505] text-white">
+        <main className="min-h-screen min-h-[100dvh] bg-background text-slate-900 selection:bg-primary/15 selection:text-primary">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-zinc-800">
-                <div className="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between gap-2">
-                    <Link href="/" className="text-lg md:text-xl font-bold shrink-0">
-                        Tap<span className="text-violet-400">Once</span>
+            <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-zinc-200/80">
+                <div className="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between gap-2 max-w-5xl">
+                    <Link href="/" className="text-lg md:text-xl font-bold shrink-0 text-slate-900">
+                        Tap<span className="text-primary">Once</span>
                     </Link>
 
                     {/* Progress */}
@@ -234,24 +226,24 @@ export default function SetupProfilePage() {
                                     onClick={() => index <= currentStep && setCurrentStep(index)}
                                     disabled={index > currentStep}
                                     className={`
-                                        flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 rounded-full text-xs md:text-sm transition-all
+                                        flex items-center gap-1.5 md:gap-2 px-3 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider transition-all border
                                         ${index === currentStep
-                                            ? 'bg-violet-500 text-white'
+                                            ? 'bg-primary text-white border-primary'
                                             : index < currentStep
-                                                ? 'bg-green-500/20 text-green-400'
-                                                : 'bg-zinc-800 text-zinc-500'
+                                                ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
+                                                : 'bg-zinc-50 border-zinc-200/85 text-zinc-400'
                                         }
                                     `}
                                 >
                                     {index < currentStep ? (
-                                        <Check className="w-3 h-3 md:w-4 md:h-4" />
+                                        <Check className="w-3.5 h-3.5" />
                                     ) : (
-                                        <step.icon className="w-3 h-3 md:w-4 md:h-4" />
+                                        <step.icon className="w-3.5 h-3.5" />
                                     )}
                                     <span className="hidden sm:inline">{step.title}</span>
                                 </button>
                                 {index < steps.length - 1 && (
-                                    <div className={`w-4 h-0.5 mx-1 ${index < currentStep ? 'bg-green-500' : 'bg-zinc-800'}`} />
+                                    <div className={`w-4 h-[1px] mx-1 ${index < currentStep ? 'bg-emerald-500' : 'bg-zinc-250'}`} />
                                 )}
                             </div>
                         ))}
@@ -259,17 +251,17 @@ export default function SetupProfilePage() {
 
                     <button
                         onClick={handleSkip}
-                        className="text-sm text-zinc-500 hover:text-white transition-colors"
+                        className="text-xs font-mono font-bold text-zinc-400 hover:text-slate-900 uppercase tracking-wider transition-colors"
                     >
-                        Skip for now
+                        Skip
                     </button>
                 </div>
             </header>
 
-            <div className="container mx-auto px-4 py-6 md:py-8">
-                <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-start">
+            <div className="container mx-auto px-4 py-8 max-w-5xl">
+                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                     {/* Left: Form - shows after preview on mobile */}
-                    <div className="order-2 lg:order-1 w-full">
+                    <div className="order-2 lg:order-1 w-full lg:col-span-7">
                         <AnimatePresence mode="wait">
                             {/* Step 1: Photo */}
                             {currentStep === 0 && (
@@ -278,35 +270,35 @@ export default function SetupProfilePage() {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
-                                    className="space-y-4 md:space-y-6"
+                                    className="space-y-4 md:space-y-6 bg-zinc-50/50 border border-zinc-200/60 p-6 md:p-8 rounded-2xl shadow-sm"
                                 >
                                     <div>
-                                        <h2 className="text-xl md:text-2xl font-bold mb-2">Add Your Photo</h2>
-                                        <p className="text-zinc-400 text-sm md:text-base">
-                                            A professional photo helps people recognize you
+                                        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-slate-900">Add Your Photo</h2>
+                                        <p className="text-zinc-500 text-xs font-normal">
+                                            A professional photo helps people recognize you. JPG, PNG up to 5MB.
                                         </p>
                                     </div>
 
-                                    <div className="flex flex-col items-center">
+                                    <div className="flex flex-col items-center py-6">
                                         <div className="relative">
-                                            <div className="w-40 h-40 rounded-full bg-zinc-900 border-2 border-dashed border-zinc-700 flex items-center justify-center overflow-hidden">
+                                            <div className="w-40 h-40 rounded-full bg-white border border-zinc-200/80 flex items-center justify-center overflow-hidden shadow-sm">
                                                 {photo ? (
                                                     <>
                                                         <img src={photo} alt="" className="w-full h-full object-cover" />
                                                         <button
                                                             onClick={() => setPhoto(null)}
-                                                            className="absolute top-0 right-0 p-1 bg-red-500 rounded-full"
+                                                            className="absolute top-0 right-0 p-1.5 bg-rose-605 text-white rounded-full hover:bg-rose-700 transition-colors shadow-sm"
                                                         >
-                                                            <X className="w-4 h-4" />
+                                                            <X className="w-3.5 h-3.5" />
                                                         </button>
                                                     </>
                                                 ) : (
-                                                    <Camera className="w-12 h-12 text-zinc-600" />
+                                                    <Camera className="w-12 h-12 text-zinc-400" />
                                                 )}
                                             </div>
                                             {!photo && (
-                                                <label className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-2 bg-violet-500 hover:bg-violet-600 rounded-xl cursor-pointer transition-colors">
-                                                    <Upload className="w-4 h-4 inline mr-2" />
+                                                <label className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-xl cursor-pointer transition-colors shadow-sm text-xs font-semibold uppercase tracking-wider font-mono">
+                                                    <Upload className="w-3.5 h-3.5 inline mr-1.5" />
                                                     Upload
                                                     <input
                                                         type="file"
@@ -317,9 +309,6 @@ export default function SetupProfilePage() {
                                                 </label>
                                             )}
                                         </div>
-                                        <p className="text-sm text-zinc-500 mt-6">
-                                            JPG, PNG up to 5MB
-                                        </p>
                                     </div>
                                 </motion.div>
                             )}
@@ -331,31 +320,32 @@ export default function SetupProfilePage() {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
-                                    className="space-y-4 md:space-y-6"
+                                    className="space-y-4 md:space-y-6 bg-zinc-50/50 border border-zinc-200/60 p-6 md:p-8 rounded-2xl shadow-sm"
                                 >
                                     <div>
-                                        <h2 className="text-xl md:text-2xl font-bold mb-2">Tell Us About You</h2>
-                                        <p className="text-zinc-400 text-sm md:text-base">
+                                        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-slate-900">Tell Us About You</h2>
+                                        <p className="text-zinc-500 text-xs font-normal">
                                             This information appears on your digital profile
                                         </p>
                                     </div>
 
                                     <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-zinc-400 mb-2">
-                                                Your Name *
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                                Your Name <span className="text-rose-500">*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 value={name}
                                                 onChange={e => setName(e.target.value)}
                                                 placeholder="Dr. John Smith"
-                                                className="w-full px-4 py-3 md:py-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors text-base"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                                                required
                                             />
                                         </div>
 
-                                        <div>
-                                            <label className="block text-sm font-medium text-zinc-400 mb-2">
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
                                                 Tagline
                                             </label>
                                             <input
@@ -364,13 +354,15 @@ export default function SetupProfilePage() {
                                                 onChange={e => setTagline(e.target.value)}
                                                 placeholder="Senior Advocate | Supreme Court"
                                                 maxLength={60}
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                             />
-                                            <p className="text-xs text-zinc-600 mt-1">{tagline.length}/60 characters</p>
+                                            <div className="flex justify-end">
+                                                <p className="text-[10px] text-zinc-400 font-mono font-bold">{tagline.length}/60</p>
+                                            </div>
                                         </div>
 
-                                        <div>
-                                            <label className="block text-sm font-medium text-zinc-400 mb-2">
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
                                                 Short Bio
                                             </label>
                                             <textarea
@@ -379,9 +371,11 @@ export default function SetupProfilePage() {
                                                 placeholder="Tell people what you do..."
                                                 maxLength={200}
                                                 rows={3}
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors resize-none"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium resize-none"
                                             />
-                                            <p className="text-xs text-zinc-600 mt-1">{bio.length}/200 characters</p>
+                                            <div className="flex justify-end">
+                                                <p className="text-[10px] text-zinc-400 font-mono font-bold">{bio.length}/200</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -394,78 +388,78 @@ export default function SetupProfilePage() {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
-                                    className="space-y-4 md:space-y-6"
+                                    className="space-y-4 md:space-y-6 bg-zinc-50/50 border border-zinc-200/60 p-6 md:p-8 rounded-2xl shadow-sm"
                                 >
                                     <div>
-                                        <h2 className="text-xl md:text-2xl font-bold mb-2">Add Your Links</h2>
-                                        <p className="text-zinc-400 text-sm md:text-base">
-                                            Help people connect with you
+                                        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-slate-900">Add Your Links</h2>
+                                        <p className="text-zinc-500 text-xs font-normal">
+                                            Help people connect with you easily
                                         </p>
                                     </div>
 
                                     <div className="space-y-4">
-                                        <div>
-                                            <label className="flex items-center gap-2 text-sm font-medium text-zinc-400 mb-2">
-                                                <Globe className="w-4 h-4" /> Website
+                                        <div className="space-y-1.5">
+                                            <label className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                                <Globe className="w-4 h-4 text-zinc-400" /> Website
                                             </label>
                                             <input
                                                 type="url"
                                                 value={socials.website}
                                                 onChange={e => setSocials(prev => ({ ...prev, website: e.target.value }))}
                                                 placeholder="https://yourwebsite.com"
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                             />
                                         </div>
 
-                                        <div>
-                                            <label className="flex items-center gap-2 text-sm font-medium text-zinc-400 mb-2">
-                                                <Linkedin className="w-4 h-4" /> LinkedIn
+                                        <div className="space-y-1.5">
+                                            <label className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                                <Linkedin className="w-4 h-4 text-zinc-400" /> LinkedIn
                                             </label>
                                             <input
                                                 type="url"
                                                 value={socials.linkedin}
                                                 onChange={e => setSocials(prev => ({ ...prev, linkedin: e.target.value }))}
                                                 placeholder="https://linkedin.com/in/username"
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                             />
                                         </div>
 
-                                        <div>
-                                            <label className="flex items-center gap-2 text-sm font-medium text-zinc-400 mb-2">
-                                                <Instagram className="w-4 h-4" /> Instagram
+                                        <div className="space-y-1.5">
+                                            <label className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                                <Instagram className="w-4 h-4 text-zinc-400" /> Instagram
                                             </label>
                                             <input
                                                 type="text"
                                                 value={socials.instagram}
                                                 onChange={e => setSocials(prev => ({ ...prev, instagram: e.target.value }))}
                                                 placeholder="@username"
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                             />
                                         </div>
 
-                                        <div>
-                                            <label className="flex items-center gap-2 text-sm font-medium text-zinc-400 mb-2">
-                                                <Mail className="w-4 h-4" /> Email
+                                        <div className="space-y-1.5">
+                                            <label className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                                <Mail className="w-4 h-4 text-zinc-400" /> Email
                                             </label>
                                             <input
                                                 type="email"
                                                 value={socials.email}
                                                 onChange={e => setSocials(prev => ({ ...prev, email: e.target.value }))}
                                                 placeholder="you@example.com"
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                             />
                                         </div>
 
-                                        <div>
-                                            <label className="flex items-center gap-2 text-sm font-medium text-zinc-400 mb-2">
-                                                <Phone className="w-4 h-4" /> Phone
+                                        <div className="space-y-1.5">
+                                            <label className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider">
+                                                <Phone className="w-4 h-4 text-zinc-400" /> Phone
                                             </label>
                                             <input
                                                 type="tel"
                                                 value={socials.phone}
                                                 onChange={e => setSocials(prev => ({ ...prev, phone: e.target.value }))}
                                                 placeholder="+91 98765 43210"
-                                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                                                className="w-full px-4 py-3 bg-white border border-zinc-200/80 rounded-xl text-slate-900 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -479,12 +473,12 @@ export default function SetupProfilePage() {
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
-                                    className="space-y-4 md:space-y-6"
+                                    className="space-y-4 md:space-y-6 bg-zinc-50/50 border border-zinc-200/60 p-6 md:p-8 rounded-2xl shadow-sm"
                                 >
                                     <div>
-                                        <h2 className="text-xl md:text-2xl font-bold mb-2">Choose Your Theme</h2>
-                                        <p className="text-zinc-400 text-sm md:text-base">
-                                            Select a color theme for your profile
+                                        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-slate-900">Choose Your Theme</h2>
+                                        <p className="text-zinc-500 text-xs font-normal">
+                                            Select a theme gradient for your public profile card
                                         </p>
                                     </div>
 
@@ -494,25 +488,25 @@ export default function SetupProfilePage() {
                                                 key={theme.id}
                                                 onClick={() => setSelectedTheme(theme)}
                                                 className={`
-                                                    relative rounded-xl overflow-hidden border transition-all
+                                                    relative rounded-xl overflow-hidden border transition-all shadow-sm
                                                     ${selectedTheme.id === theme.id
-                                                        ? 'ring-2 ring-violet-500 border-violet-500'
-                                                        : 'border-zinc-800 hover:border-zinc-700'
+                                                        ? 'ring-2 ring-primary border-primary'
+                                                        : 'border-zinc-200/80 hover:border-zinc-300'
                                                     }
                                                 `}
                                             >
                                                 <div className={`aspect-[4/3] bg-gradient-to-br ${theme.gradient} p-4`}>
                                                     <div
-                                                        className="w-8 h-8 rounded-full"
+                                                        className="w-8 h-8 rounded-full border border-white/20"
                                                         style={{ backgroundColor: theme.accent }}
                                                     />
                                                 </div>
-                                                <div className="p-2 bg-zinc-900 text-center">
-                                                    <p className="text-sm font-medium">{theme.name}</p>
+                                                <div className="p-2 bg-white text-center border-t border-zinc-100">
+                                                    <p className="text-xs font-semibold text-slate-800">{theme.name}</p>
                                                 </div>
                                                 {selectedTheme.id === theme.id && (
-                                                    <div className="absolute top-2 right-2 w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center">
-                                                        <Check className="w-4 h-4" />
+                                                    <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-sm">
+                                                        <Check className="w-3.5 h-3.5 text-white" />
                                                     </div>
                                                 )}
                                             </button>
@@ -527,32 +521,32 @@ export default function SetupProfilePage() {
                             {currentStep > 0 && (
                                 <button
                                     onClick={handleBack}
-                                    className="flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-xl transition-colors"
+                                    className="flex items-center gap-2 px-6 py-3 bg-zinc-50 border border-zinc-200/85 hover:bg-zinc-100 rounded-xl transition-colors font-semibold text-xs font-mono uppercase tracking-wider text-slate-700"
                                 >
-                                    <ChevronLeft className="w-4 h-4" />
+                                    <ChevronLeft className="w-3.5 h-3.5" />
                                     Back
                                 </button>
                             )}
                             <button
                                 onClick={handleNext}
                                 disabled={!canProceed() || loading}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-violet-500 hover:bg-violet-600 disabled:bg-zinc-700 disabled:text-zinc-500 rounded-xl font-medium transition-colors active:scale-[0.98]"
+                                className="flex-1 flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-slate-900 text-white hover:bg-slate-800 disabled:bg-zinc-100 disabled:text-zinc-400 rounded-xl font-semibold text-xs font-mono uppercase tracking-wider transition-colors active:scale-[0.99]"
                             >
                                 {loading ? (
                                     <motion.div
                                         animate={{ rotate: 360 }}
-                                        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                                        className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                                        transition={{ repeat: Infinity, duration: 1, ease: 'linear' as const }}
+                                        className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                                     />
                                 ) : currentStep === steps.length - 1 ? (
                                     <>
                                         Complete Setup
-                                        <Sparkles className="w-4 h-4" />
+                                        <Sparkles className="w-3.5 h-3.5" />
                                     </>
                                 ) : (
                                     <>
                                         Continue
-                                        <ChevronRight className="w-4 h-4" />
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </>
                                 )}
                             </button>
@@ -560,11 +554,11 @@ export default function SetupProfilePage() {
                     </div>
 
                     {/* Right: Preview - shows first on mobile */}
-                    <div className="order-1 lg:order-2 lg:sticky lg:top-24 w-full">
-                        <div className="text-center mb-3 md:mb-4">
-                            <p className="text-xs md:text-sm text-zinc-500 flex items-center justify-center gap-2">
-                                <Eye className="w-4 h-4" />
-                                Live Preview
+                    <div className="order-1 lg:order-2 lg:sticky lg:top-28 w-full lg:col-span-5 flex flex-col items-center">
+                        <div className="text-center mb-4">
+                            <p className="text-[10px] text-zinc-400 font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 select-none">
+                                <Eye className="w-3.5 h-3.5" />
+                                [Live Profile Page Preview]
                             </p>
                         </div>
                         <ProfilePreview

@@ -6,7 +6,7 @@ import {
     Check, ChevronDown
 } from "lucide-react"
 import React, { useState } from "react"
-import { CardTemplate, allTemplates, professions, getTemplatesByProfession } from "@/data/cardTemplates"
+import { CardTemplate, professions, getTemplatesByProfession } from "@/data/cardTemplates"
 
 interface TemplateSelectorProps {
     selected: CardTemplate | null
@@ -24,14 +24,15 @@ export default function TemplateSelector({ selected, onSelect }: TemplateSelecto
     const templates = getTemplatesByProfession(activeProfession)
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-white">Choose Your Template</h3>
+                <h3 className="text-sm font-bold text-slate-900 tracking-tight">Choose Template</h3>
                 <button
+                    type="button"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="text-zinc-400 hover:text-white transition-colors"
+                    className="text-zinc-400 hover:text-slate-900 transition-colors"
                 >
-                    <ChevronDown className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`h-4.5 w-4.5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                 </button>
             </div>
 
@@ -41,22 +42,23 @@ export default function TemplateSelector({ selected, onSelect }: TemplateSelecto
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="space-y-6 overflow-hidden"
+                        className="space-y-5 overflow-hidden"
                     >
                         {/* Profession Tabs */}
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1.5">
                             {professions.map((prof) => {
                                 const Icon = iconMap[prof.icon] || Building2
                                 return (
                                     <button
                                         key={prof.id}
+                                        type="button"
                                         onClick={() => setActiveProfession(prof.id)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${activeProfession === prof.id
-                                                ? "bg-violet-500 text-white"
-                                                : "bg-zinc-900/50 text-zinc-400 border border-white/10 hover:border-white/20"
+                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${activeProfession === prof.id
+                                                ? "bg-slate-900 text-white"
+                                                : "bg-zinc-100 text-zinc-550 border border-zinc-200/50 hover:bg-zinc-200/50"
                                             }`}
                                     >
-                                        <Icon className="h-4 w-4" />
+                                        <Icon className="h-3.5 w-3.5" />
                                         {prof.name}
                                     </button>
                                 )
@@ -64,53 +66,53 @@ export default function TemplateSelector({ selected, onSelect }: TemplateSelecto
                         </div>
 
                         {/* Template Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                             {templates.map((template) => (
                                 <motion.button
                                     key={template.id}
+                                    type="button"
                                     onClick={() => onSelect(template)}
-                                    whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     className={`relative rounded-xl border overflow-hidden text-left transition-all ${selected?.id === template.id
-                                            ? "ring-2 ring-violet-500 border-violet-500"
-                                            : "border-white/10 hover:border-white/20"
+                                            ? "ring-2 ring-primary border-primary"
+                                            : "border-zinc-200/60 hover:border-zinc-300 bg-white"
                                         }`}
                                 >
                                     {/* Card Preview */}
                                     <div className={`aspect-[1.6/1] bg-gradient-to-br ${template.gradient} p-4 relative`}>
                                         {/* Noise Texture */}
-                                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                                        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.12] mix-blend-overlay" />
 
                                         {/* Icon */}
-                                        <div className="absolute top-3 right-3 h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
-                                            <div className="h-4 w-4 rounded-full bg-white/30" />
+                                        <div className="absolute top-2.5 right-2.5 h-6.5 w-6.5 rounded-lg bg-white/10 flex items-center justify-center border border-white/5">
+                                            <div className="h-3 w-3 rounded-full bg-white/40" />
                                         </div>
 
                                         {/* Text Preview */}
-                                        <div className="absolute bottom-3 left-4">
-                                            <div className={`h-2 w-16 bg-white/30 rounded mb-1 ${template.fontFamily}`} />
-                                            <div className="h-1.5 w-12 bg-white/20 rounded" />
+                                        <div className="absolute bottom-3 left-3">
+                                            <div className={`h-1.5 w-12 bg-white/40 rounded mb-0.5 ${template.fontFamily}`} />
+                                            <div className="h-1 w-9 bg-white/20 rounded" />
                                         </div>
 
                                         {/* Selected Check */}
                                         {selected?.id === template.id && (
-                                            <div className="absolute top-3 left-3 h-6 w-6 bg-violet-500 rounded-full flex items-center justify-center">
-                                                <Check className="h-4 w-4 text-white" />
+                                            <div className="absolute top-2.5 left-2.5 h-5 w-5 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                                <Check className="h-3.5 w-3.5 text-black" strokeWidth={3} />
                                             </div>
                                         )}
 
                                         {/* Popular Badge */}
                                         {template.popular && (
-                                            <div className="absolute top-3 left-3 px-2 py-0.5 bg-amber-500 text-black text-[9px] font-bold rounded uppercase">
+                                            <div className="absolute top-2.5 left-2.5 px-1.5 py-0.5 bg-slate-900 text-white text-[8px] font-bold rounded uppercase tracking-wider">
                                                 Popular
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Template Info */}
-                                    <div className="p-3 bg-zinc-900/80">
-                                        <h4 className="font-bold text-white text-sm">{template.name}</h4>
-                                        <p className="text-xs text-zinc-500 truncate">{template.description}</p>
+                                    <div className="p-2.5 bg-zinc-50/50 border-t border-zinc-150">
+                                        <h4 className="font-bold text-slate-900 text-[11px] leading-none mb-1">{template.name}</h4>
+                                        <p className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider truncate font-mono">{template.fontStyle}</p>
                                     </div>
                                 </motion.button>
                             ))}
@@ -121,13 +123,13 @@ export default function TemplateSelector({ selected, onSelect }: TemplateSelecto
 
             {/* Selected Template Summary */}
             {selected && (
-                <div className="flex items-center gap-4 p-4 bg-zinc-900/50 border border-white/10 rounded-xl">
-                    <div className={`h-12 w-20 rounded-lg bg-gradient-to-br ${selected.gradient} relative overflow-hidden`}>
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                <div className="flex items-center gap-3 p-3 bg-white border border-zinc-200/60 rounded-xl shadow-sm">
+                    <div className={`h-10 w-16 shrink-0 rounded-lg bg-gradient-to-br ${selected.gradient} relative overflow-hidden border border-zinc-150`}>
+                        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.12] mix-blend-overlay" />
                     </div>
                     <div>
-                        <p className="font-bold text-white">{selected.name}</p>
-                        <p className="text-xs text-zinc-500">{selected.profession} • {selected.fontStyle} style</p>
+                        <p className="font-bold text-slate-900 text-xs">{selected.name}</p>
+                        <p className="text-[10px] text-zinc-400 font-mono font-bold uppercase tracking-wider mt-0.5">{selected.profession} • {selected.fontStyle} theme</p>
                     </div>
                 </div>
             )}

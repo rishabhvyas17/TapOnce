@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { Instagram, Twitter, Linkedin, Mail, Check, Loader2 } from "lucide-react"
+import { Instagram, Twitter, Linkedin, Mail, Check, Loader2, Cpu } from "lucide-react"
 
 export default function Footer() {
     const [email, setEmail] = useState("")
@@ -36,28 +36,26 @@ export default function Footer() {
     }
 
     return (
-        <footer className="relative bg-background text-white pt-20 pb-10 overflow-hidden border-t border-white/[0.04]">
-            {/* Soft Ambient Glow */}
-            <div className="absolute inset-0 pointer-events-none opacity-10">
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(99,102,241,0.1)_0%,transparent_75%)] translate-y-1/2 -translate-x-1/4" />
-            </div>
+        <footer className="relative bg-white text-slate-900 pt-16 pb-10 overflow-hidden border-t border-zinc-150">
+            {/* Ambient Technical Background Grid */}
+            <div className="absolute inset-0 z-0 bg-[url('/grid.svg')] opacity-[0.015] pointer-events-none" />
 
             <div className="container relative z-10 px-4 md:px-6 mx-auto max-w-5xl">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-16">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12">
                     {/* Brand Column */}
-                    <div className="md:col-span-5 space-y-6">
+                    <div className="md:col-span-5 space-y-4">
                         <Link href="/" className="inline-block flex items-center gap-2 group">
-                            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-violet-700 flex items-center justify-center transition-transform group-hover:scale-105">
-                                <span className="font-bold text-white text-xs">T</span>
+                            <div className="h-6.5 w-6.5 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
+                                <Cpu className="h-4 w-4 text-white animate-pulse" />
                             </div>
-                            <span className="font-display font-bold text-base tracking-tight text-white">
+                            <span className="font-display font-bold text-sm tracking-tight text-slate-900">
                                 Tap<span className="text-primary">Once</span>
                             </span>
                         </Link>
-                        <p className="text-zinc-400 text-sm leading-relaxed max-w-sm font-normal">
+                        <p className="text-zinc-500 text-xs leading-relaxed max-w-xs font-normal">
                             The last business card you'll ever need. Share your professional profile instantly with a single tap.
                         </p>
-                        <div className="flex gap-3 pt-2">
+                        <div className="flex gap-2.5 pt-1">
                             {[
                                 { Icon: Instagram, href: "https://instagram.com/taponce" },
                                 { Icon: Twitter, href: "https://twitter.com/taponce" },
@@ -68,30 +66,30 @@ export default function Footer() {
                                     href={href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-8 w-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.08] hover:text-primary transition-colors text-zinc-400"
+                                    className="h-7 w-7 flex items-center justify-center rounded-lg bg-zinc-50 border border-zinc-200/80 hover:bg-zinc-100 hover:text-primary transition-colors text-zinc-400"
                                 >
-                                    <Icon size={14} />
+                                    <Icon size={12} />
                                 </a>
                             ))}
                         </div>
                     </div>
 
                     {/* Links Columns */}
-                    <div className="md:col-span-3 space-y-4">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Product</h4>
-                        <ul className="space-y-2.5">
+                    <div className="md:col-span-3 space-y-3">
+                        <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">[NAVIGATION]</h4>
+                        <ul className="space-y-2">
                             <li>
-                                <Link href="/order" className="text-zinc-400 hover:text-white transition-colors text-sm font-normal">
+                                <Link href="/order" className="text-zinc-500 hover:text-slate-900 transition-colors text-xs font-semibold">
                                     Get Custom Card
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/order/track" className="text-zinc-400 hover:text-white transition-colors text-sm font-normal">
+                                <Link href="/order/track" className="text-zinc-500 hover:text-slate-900 transition-colors text-xs font-semibold">
                                     Track Your Order
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/#collection" className="text-zinc-400 hover:text-white transition-colors text-sm font-normal">
+                                <Link href="/#collection" className="text-zinc-500 hover:text-slate-900 transition-colors text-xs font-semibold">
                                     Materials & Pricing
                                 </Link>
                             </li>
@@ -99,13 +97,13 @@ export default function Footer() {
                     </div>
 
                     {/* Newsletter Subscription Column */}
-                    <div className="md:col-span-4 space-y-4">
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Stay Updated</h4>
-                        <p className="text-zinc-400 text-sm leading-relaxed font-normal">
+                    <div className="md:col-span-4 space-y-3">
+                        <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">[NEWSLETTER]</h4>
+                        <p className="text-zinc-500 text-xs leading-relaxed font-normal">
                             Subscribe to get notified about new templates and material drops.
                         </p>
 
-                        <form onSubmit={handleSubscribe} className="space-y-2">
+                        <form onSubmit={handleSubscribe} className="space-y-1.5">
                             <div className="flex gap-2">
                                 <input
                                     type="email"
@@ -116,18 +114,18 @@ export default function Footer() {
                                         if (status === "error") setStatus("idle")
                                     }}
                                     placeholder="Enter your email"
-                                    className="flex-1 min-w-0 bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-primary focus:bg-white/[0.05] transition-all"
+                                    className="flex-1 min-w-0 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-primary focus:bg-white transition-all font-medium"
                                     disabled={status === "loading" || status === "success"}
                                 />
                                 <button
                                     type="submit"
                                     disabled={status === "loading" || status === "success"}
-                                    className="flex items-center justify-center px-4 py-2.5 bg-white text-black font-semibold rounded-xl text-xs hover:bg-zinc-150 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 min-w-[64px]"
+                                    className="flex items-center justify-center px-4 py-2 bg-slate-900 text-white font-semibold rounded-xl text-xs hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                                 >
                                     {status === "loading" ? (
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                     ) : status === "success" ? (
-                                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                        <Check className="w-3.5 h-3.5 text-emerald-500" />
                                     ) : (
                                         "Subscribe"
                                     )}
@@ -135,13 +133,13 @@ export default function Footer() {
                             </div>
                             
                             {status === "success" && (
-                                <p className="text-xs text-emerald-400 font-medium pt-1">
+                                <p className="text-[10px] text-emerald-600 font-semibold pt-0.5">
                                     Subscribed successfully!
                                 </p>
                             )}
                             
                             {status === "error" && (
-                                <p className="text-xs text-rose-400 font-medium pt-1">
+                                <p className="text-[10px] text-rose-500 font-semibold pt-0.5">
                                     {errorMessage}
                                 </p>
                             )}
@@ -150,13 +148,13 @@ export default function Footer() {
                 </div>
 
                 {/* Footer Bottom */}
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-white/[0.06] text-xs text-zinc-500 font-normal">
-                    <p>&copy; {new Date().getFullYear()} TapOnce. All rights reserved.</p>
-                    <div className="flex gap-6">
-                        <Link href="/privacy" className="hover:text-zinc-350 transition-colors">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-zinc-355 transition-colors">Terms of Service</Link>
-                        <a href="mailto:hello@taponce.in" className="flex items-center gap-1 hover:text-zinc-355 transition-colors">
-                            <Mail size={12} />
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-zinc-150 text-[10px] text-zinc-400 font-semibold tracking-wide">
+                    <p>&copy; {new Date().getFullYear()} TAPONCE. ALL RIGHTS RESERVED.</p>
+                    <div className="flex gap-5 font-mono uppercase">
+                        <Link href="/privacy" className="hover:text-slate-900 transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
+                        <a href="mailto:hello@taponce.in" className="flex items-center gap-1 hover:text-slate-900 transition-colors font-sans lowercase">
+                            <Mail size={11} />
                             hello@taponce.in
                         </a>
                     </div>

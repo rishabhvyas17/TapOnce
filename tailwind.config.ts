@@ -1,8 +1,6 @@
 /**
  * @file Tailwind CSS Configuration
- * @description Tailwind config with shadcn/ui theme customization
- * 
- * @see https://ui.shadcn.com/docs/theming
+ * @description TapOnce design system — minimal, mobile-first
  */
 
 import type { Config } from 'tailwindcss'
@@ -17,9 +15,16 @@ const config: Config = {
     theme: {
         container: {
             center: true,
-            padding: '2rem',
+            padding: {
+                DEFAULT: '1rem',
+                sm: '1.5rem',
+                lg: '2rem',
+            },
             screens: {
-                '2xl': '1400px',
+                sm: '640px',
+                md: '768px',
+                lg: '1024px',
+                xl: '1200px',
             },
         },
         extend: {
@@ -57,19 +62,20 @@ const config: Config = {
                     DEFAULT: 'hsl(var(--card))',
                     foreground: 'hsl(var(--card-foreground))',
                 },
-                // Custom TapOnce brand colors
-                taponce: {
-                    50: '#eff6ff',
-                    100: '#dbeafe',
-                    200: '#bfdbfe',
-                    300: '#93c5fd',
-                    400: '#60a5fa',
-                    500: '#3b82f6',
-                    600: '#2563eb',
-                    700: '#1d4ed8',
-                    800: '#1e40af',
-                    900: '#1e3a8a',
+                success: {
+                    DEFAULT: 'hsl(var(--success))',
+                    foreground: 'hsl(var(--success-foreground))',
                 },
+            },
+            fontFamily: {
+                sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                display: ['var(--font-display)', 'Inter', 'system-ui', 'sans-serif'],
+            },
+            fontSize: {
+                'display-xl': ['4rem', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '800' }],
+                'display-lg': ['3rem', { lineHeight: '1.05', letterSpacing: '-0.025em', fontWeight: '700' }],
+                'display-md': ['2.25rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
+                'display-sm': ['1.875rem', { lineHeight: '1.15', letterSpacing: '-0.015em', fontWeight: '600' }],
             },
             borderRadius: {
                 lg: 'var(--radius)',

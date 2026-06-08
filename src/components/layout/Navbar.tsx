@@ -1,131 +1,158 @@
 "use client"
 
-import { motion, useScroll, useTransform } from "framer-motion"
-import { Menu, X } from "lucide-react"
+import { motion, useScroll, AnimatePresence } from "framer-motion"
+import { Menu, X, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
-import { cn } from "@/lib/utils"
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false)
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [mobileOpen, setMobileOpen] = useState(false)
     const { scrollY } = useScroll()
 
     useEffect(() => {
-        const unsubscribe = scrollY.on("change", (latest) => {
-            setIsScrolled(latest > 50)
-        })
+        const unsubscribe = scrollY.on("change", (v) => setIsScrolled(v > 40))
         return () => unsubscribe()
     }, [scrollY])
 
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+        document.body.style.overflow = mobileOpen ? 'hidden' : ''
+        return () => { document.body.style.overflow = '' }
+    }, [mobileOpen])
+
     const navLinks = [
-        { name: "Shop", href: "/order" },
-        { name: "Become Agent", href: "/become-agent" },
-        { name: "About", href: "#features" },
+        { name: "Cards", href: "/order" },
+        { name: "How It Works", href: "/#how-it-works" },
+        { name: "Track Order", href: "/order/track" },
     ]
 
     return (
-        <motion.header
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4"
-        >
-            <div
-                className={cn(
-                    "relative flex items-center justify-between px-6 py-3 transition-all duration-500 ease-in-out",
-                    isScrolled
-                        ? "w-[90%] md:w-[70%] lg:w-[50%] bg-black/60 backdrop-blur-xl border border-white/10 rounded-full shadow-[0_0_20px_-10px_rgba(255,255,255,0.1)]"
-                        : "w-full max-w-7xl bg-transparent"
-                )}
+        <>
+            <motion.header
+                initial={{ y: -100 }}
+                animate={{ y: 0 }}
+                transition={{ type: "spring", stiffness: 120, damping: 24 }}
+                className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-3 md:pt-4"
             >
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
-                        <span className="font-bold text-white text-lg">T</span>
-                        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <span className={cn("font-bold text-lg tracking-tight transition-opacity", isScrolled ? "text-white" : "text-white")}>
-                        Tap<span className="text-violet-400">Once</span>
-                    </span>
-                </Link>
-
-                {/* Desktop Nav */}
-                <nav className="hidden md:flex items-center gap-1">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className="relative px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors group"
-                        >
-                            {link.name}
-                            <span className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-violet-500 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                        </Link>
-                    ))}
-                </nav>
-
-                {/* CTA */}
-                <div className="hidden md:flex items-center gap-4">
-                    <Link
-                        href="/login"
-                        className="text-sm font-medium text-white hover:text-violet-300 transition-colors"
-                    >
-                        Login
-                    </Link>
-                    <Link
-                        href="/order"
-                        className={cn(
-                            "px-5 py-2 text-sm font-medium rounded-full transition-all hover:scale-105 active:scale-95",
-                            isScrolled
-                                ? "bg-white text-black hover:bg-zinc-200"
-                                : "bg-white/10 text-white border border-white/10 hover:bg-white/20"
-                        )}
-                    >
-                        Get Card
-                    </Link>
-                </div>
-
-                {/* Mobile Toggle */}
-                <button
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="md:hidden p-2 text-white"
+                <nav
+                    aria-label="Main navigation"
+                    className={`
+                        relative flex items-center justify-between w-full transition-all duration-500 ease-out
+                        ${isScrolled
+                            ? 'max-w-2xl px-4 py-2.5 glass border border-white/[0.06] rounded-full shadow-lg shadow-black/20'
+                            : 'max-w-5xl px-2 py-3 bg-transparent'
+                        }
+                    `}
                 >
-                    {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2 group" aria-label="TapOnce home">
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-700 flex items-center justify-center transition-transform group-hover:scale-105">
+                            <span className="font-bold text-white text-sm">T</span>
+                        </div>
+                        <span className="font-display font-bold text-lg tracking-tight text-white">
+                            Tap<span className="text-primary">Once</span>
+                        </span>
+                    </Link>
 
-                {/* Mobile Menu */}
-                {mobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: -20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="absolute top-full left-0 right-0 mt-4 p-4 mx-4 rounded-2xl bg-[#0A0A0A] border border-white/10 shadow-2xl md:hidden flex flex-col gap-4"
-                    >
+                    {/* Desktop Nav */}
+                    <div className="hidden md:flex items-center gap-1">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="block px-4 py-3 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                                className="px-3.5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/[0.04]"
                             >
                                 {link.name}
                             </Link>
                         ))}
-                        <div className="h-px bg-white/10 my-2" />
+                    </div>
+
+                    {/* Desktop CTA */}
+                    <div className="hidden md:flex items-center gap-3">
                         <Link
                             href="/login"
-                            className="block px-4 py-3 text-sm font-medium text-center text-zinc-400 hover:text-white"
+                            className="px-3.5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
                         >
-                            Login
+                            Log in
                         </Link>
                         <Link
                             href="/order"
-                            className="block px-4 py-3 text-sm font-medium text-center bg-white text-black rounded-xl hover:bg-zinc-200"
+                            className="group flex items-center gap-1.5 px-4 py-2 text-sm font-semibold bg-white text-black rounded-full hover:bg-zinc-100 transition-all active:scale-95"
                         >
-                            Get Custom Card
+                            Get Your Card
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                         </Link>
+                    </div>
+
+                    {/* Mobile Toggle */}
+                    <button
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                        className="md:hidden p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={mobileOpen}
+                    >
+                        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+                    </button>
+                </nav>
+            </motion.header>
+
+            {/* Mobile Menu — Full Screen Overlay */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed inset-0 z-40 bg-background/95 backdrop-blur-md md:hidden"
+                    >
+                        <div className="flex flex-col h-full pt-20 px-6 pb-safe">
+                            <nav className="flex flex-col gap-1 flex-1" aria-label="Mobile navigation">
+                                {navLinks.map((link, i) => (
+                                    <motion.div
+                                        key={link.name}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.05 + 0.1 }}
+                                    >
+                                        <Link
+                                            href={link.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className="block py-4 text-xl font-display font-semibold text-white border-b border-white/[0.06] active:text-primary transition-colors"
+                                        >
+                                            {link.name}
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </nav>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.25 }}
+                                className="space-y-3 pb-8"
+                            >
+                                <Link
+                                    href="/order"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-white text-black font-semibold rounded-xl active:scale-[0.98] transition-transform"
+                                >
+                                    Get Your Card
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                                <Link
+                                    href="/login"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block w-full py-3.5 text-center text-zinc-400 font-medium border border-white/[0.08] rounded-xl active:bg-white/[0.04] transition-colors"
+                                >
+                                    Log in
+                                </Link>
+                            </motion.div>
+                        </div>
                     </motion.div>
                 )}
-            </div>
-        </motion.header>
+            </AnimatePresence>
+        </>
     )
 }

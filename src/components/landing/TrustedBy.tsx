@@ -9,17 +9,17 @@ const brands = [
 
 export default function TrustedBy() {
     return (
-        <section className="py-12 bg-[#0A0A0A] overflow-hidden border-b border-white/5">
-            <div className="container mx-auto px-4 mb-8 text-center">
-                <p className="text-sm font-medium text-zinc-500 uppercase tracking-widest">
-                    Trusted by forward-thinking teams at
+        <section className="py-10 bg-background overflow-hidden border-y border-white/[0.04]">
+            <div className="max-w-6xl mx-auto px-4 mb-6 text-center">
+                <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+                    Trusted by modern professionals at
                 </p>
             </div>
 
-            <div className="flex relative items-center">
+            <div className="flex relative items-center max-w-5xl mx-auto">
                 {/* Gradient Masks */}
-                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10" />
-                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10" />
+                <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
                 {/* Marquee Container */}
                 <div className="flex w-full overflow-hidden">
@@ -28,13 +28,16 @@ export default function TrustedBy() {
                         animate={{ x: "-50%" }}
                         transition={{
                             ease: "linear",
-                            duration: 30, // Adjust speed
+                            duration: 25,
                             repeat: Infinity,
                         }}
                     >
-                        {/* Duplicate list for seamless loop */}
+                        {/* Multiple copies for a seamless loop */}
                         {[...brands, ...brands, ...brands].map((brand, i) => (
-                            <div key={i} className="text-2xl font-bold text-zinc-700 hover:text-white transition-colors cursor-default select-none">
+                            <div 
+                                key={i} 
+                                className="text-lg md:text-xl font-semibold text-zinc-600 hover:text-zinc-400 transition-colors cursor-default select-none tracking-tight"
+                            >
                                 {brand}
                             </div>
                         ))}

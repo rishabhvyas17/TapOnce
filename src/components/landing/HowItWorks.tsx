@@ -6,25 +6,25 @@ import React from "react"
 
 const steps = [
     {
-        number: "01",
+        number: "[01]",
         icon: Palette,
         title: "Design Your Card",
-        description: "Choose between our premium matte metal or sleek matte PVC. Customize with your name, job title, logo, and design preview.",
-        gradient: "from-primary to-violet-600"
+        description: "Choose between premium matte black metal or matte PVC. Personalize with your logo, name, and subtitle preview.",
+        color: "text-primary bg-primary/5 border-primary/10"
     },
     {
-        number: "02",
+        number: "[02]",
         icon: Smartphone,
         title: "Setup Your Profile",
-        description: "Configure your rich digital page in minutes. Add links, contact cards, social profiles, and media. No application download needed.",
-        gradient: "from-indigo-500 to-primary"
+        description: "Create and configure your rich digital business card profile online. Add social links, links, and contact vCards.",
+        color: "text-blue-600 bg-blue-50 border-blue-100"
     },
     {
-        number: "03",
+        number: "[03]",
         icon: Zap,
         title: "Tap and Share",
-        description: "Tap your card against any modern smartphone to instantly share your digital card. Works offline, fast, and updates instantly.",
-        gradient: "from-violet-500 to-indigo-600"
+        description: "Tap your card against any modern smartphone to instantly load and share your profile. Works natively without apps.",
+        color: "text-violet-600 bg-violet-50 border-violet-100"
     }
 ]
 
@@ -40,36 +40,31 @@ const containerVariants = {
 }
 
 const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.6, ease: "easeOut" as const }
+        transition: { duration: 0.5, ease: "easeOut" }
     }
 }
 
 export default function HowItWorks() {
     return (
-        <section className="py-20 lg:py-28 bg-background relative overflow-hidden">
-            {/* Ambient background glow */}
-            <div className="absolute inset-0 pointer-events-none opacity-20">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(99,102,241,0.08)_0%,transparent_70%)]" />
-            </div>
+        <section id="how-it-works" className="py-20 lg:py-28 bg-white relative overflow-hidden border-b border-zinc-100">
+            {/* Tech grid background */}
+            <div className="absolute inset-0 z-0 bg-[url('/grid.svg')] opacity-[0.02] pointer-events-none" />
 
             <div className="container mx-auto px-4 relative z-10 max-w-5xl">
                 {/* Section Header */}
-                <div className="text-center mb-16 max-w-2xl mx-auto">
-                    <span className="inline-block text-[11px] font-bold tracking-[0.2em] text-primary uppercase mb-3">
-                        Simple Process
+                <div className="text-center mb-16 max-w-2xl mx-auto space-y-3">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-zinc-50 border border-zinc-200/80 text-[10px] font-mono font-bold tracking-wider text-zinc-500 uppercase">
+                        [THE_NFC_WORKFLOW]
                     </span>
-                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-white mb-4">
-                        Share instantly in{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-400 to-indigo-300">
-                            3 easy steps
-                        </span>
+                    <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-slate-900">
+                        Go contactless in 3 steps
                     </h2>
-                    <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
-                        Go from ordering your physical card to building a powerful contactless network in under 48 hours.
+                    <p className="text-zinc-500 text-sm md:text-base leading-relaxed font-normal">
+                        Simple deployment process. From order configuration to first tap in under 48 hours.
                     </p>
                 </div>
 
@@ -89,32 +84,29 @@ export default function HowItWorks() {
                         >
                             {/* Connecting Line (desktop only, between items) */}
                             {index < steps.length - 1 && (
-                                <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-[1px] bg-gradient-to-r from-white/[0.08] to-transparent z-0 pointer-events-none" />
+                                <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-[1px] bg-gradient-to-r from-zinc-200 to-transparent z-0 pointer-events-none" />
                             )}
 
-                            <div className="relative bg-zinc-900/40 border border-white/[0.05] rounded-2xl p-6 lg:p-8 h-full hover:border-white/[0.1] transition-all duration-300 hover:bg-zinc-900/60 flex flex-col justify-between overflow-hidden">
+                            <div className="relative bg-zinc-50/50 border border-zinc-200/60 rounded-2xl p-6 lg:p-8 h-full hover:border-zinc-300 hover:bg-white hover:shadow-md transition-all duration-300 flex flex-col justify-between overflow-hidden">
                                 <div>
-                                    {/* Step Number */}
-                                    <div className="text-5xl font-display font-extrabold text-white/[0.03] absolute top-4 right-6 select-none group-hover:text-white/[0.06] transition-colors duration-300">
+                                    {/* Step Number in Monospace */}
+                                    <div className="text-xs font-mono font-bold text-zinc-400 absolute top-6 right-6 select-none">
                                         {step.number}
                                     </div>
 
                                     {/* Icon */}
-                                    <div className={`inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${step.gradient} mb-6 shadow-md group-hover:scale-105 transition-transform duration-300`}>
-                                        <step.icon className="h-5 w-5 text-white" strokeWidth={2} />
+                                    <div className={`inline-flex items-center justify-center h-11 w-11 rounded-xl border ${step.color} mb-6 shadow-sm group-hover:scale-102 transition-transform duration-300`}>
+                                        <step.icon className="h-5 w-5" strokeWidth={2.2} />
                                     </div>
 
                                     {/* Content */}
-                                    <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+                                    <h3 className="text-base font-bold text-slate-900 mb-2 tracking-tight">
                                         {step.title}
                                     </h3>
-                                    <p className="text-zinc-400 text-sm leading-relaxed font-normal">
+                                    <p className="text-zinc-500 text-xs leading-relaxed font-normal">
                                         {step.description}
                                     </p>
                                 </div>
-
-                                {/* Hover Glow */}
-                                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${step.gradient} opacity-0 group-hover:opacity-[0.02] transition-opacity duration-500 pointer-events-none`} />
                             </div>
                         </motion.div>
                     ))}

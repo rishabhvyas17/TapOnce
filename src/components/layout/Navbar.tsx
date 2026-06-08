@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useScroll, AnimatePresence } from "framer-motion"
-import { Menu, X, ArrowRight } from "lucide-react"
+import { Menu, X, ArrowRight, Cpu } from "lucide-react"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
 
@@ -22,7 +22,7 @@ export default function Navbar() {
     }, [mobileOpen])
 
     const navLinks = [
-        { name: "Cards", href: "/order" },
+        { name: "Order Card", href: "/order" },
         { name: "How It Works", href: "/#how-it-works" },
         { name: "Track Order", href: "/order/track" },
     ]
@@ -38,19 +38,19 @@ export default function Navbar() {
                 <nav
                     aria-label="Main navigation"
                     className={`
-                        relative flex items-center justify-between w-full max-w-5xl px-6 py-3.5 transition-all duration-300 ease-out rounded-full border
+                        relative flex items-center justify-between w-full max-w-5xl px-6 py-3 transition-all duration-300 ease-out rounded-full border
                         ${isScrolled
-                            ? 'glass border-white/[0.06] shadow-lg shadow-black/20'
+                            ? 'glass border-zinc-200/80 shadow-md shadow-zinc-100/50'
                             : 'bg-transparent border-transparent'
                         }
                     `}
                 >
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group" aria-label="TapOnce home">
-                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-700 flex items-center justify-center transition-transform group-hover:scale-105">
-                            <span className="font-bold text-white text-sm">T</span>
+                        <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
+                            <Cpu className="h-4.5 w-4.5 text-white animate-pulse" />
                         </div>
-                        <span className="font-display font-bold text-lg tracking-tight text-white">
+                        <span className="font-display font-bold text-base tracking-tight text-slate-900">
                             Tap<span className="text-primary">Once</span>
                         </span>
                     </Link>
@@ -61,7 +61,7 @@ export default function Navbar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="px-3.5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/[0.04]"
+                                className="px-3.5 py-1.5 text-xs font-semibold text-zinc-500 hover:text-slate-900 transition-colors rounded-lg hover:bg-zinc-100/60"
                             >
                                 {link.name}
                             </Link>
@@ -72,27 +72,27 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center gap-3">
                         <Link
                             href="/login"
-                            className="px-3.5 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
+                            className="px-3.5 py-1.5 text-xs font-semibold text-zinc-550 hover:text-slate-900 transition-colors"
                         >
                             Log in
                         </Link>
                         <Link
                             href="/order"
-                            className="group flex items-center gap-1.5 px-4 py-2 text-sm font-semibold bg-white text-black rounded-full hover:bg-zinc-100 transition-all active:scale-95"
+                            className="group flex items-center gap-1 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-full hover:bg-slate-850 transition-all active:scale-95 shadow-sm"
                         >
-                            Get Your Card
-                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                            Get Card
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                         </Link>
                     </div>
 
                     {/* Mobile Toggle */}
                     <button
                         onClick={() => setMobileOpen(!mobileOpen)}
-                        className="md:hidden p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                        className="md:hidden p-2 rounded-lg text-zinc-500 hover:text-slate-900 hover:bg-zinc-100 transition-colors"
                         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                         aria-expanded={mobileOpen}
                     >
-                        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+                        {mobileOpen ? <X size={18} /> : <Menu size={18} />}
                     </button>
                 </nav>
             </motion.header>
@@ -105,7 +105,7 @@ export default function Navbar() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 z-40 bg-background/95 backdrop-blur-md md:hidden"
+                        className="fixed inset-0 z-40 bg-white/98 backdrop-blur-md md:hidden"
                     >
                         <div className="flex flex-col h-full pt-20 px-6 pb-safe">
                             <nav className="flex flex-col gap-1 flex-1" aria-label="Mobile navigation">
@@ -119,7 +119,7 @@ export default function Navbar() {
                                         <Link
                                             href={link.href}
                                             onClick={() => setMobileOpen(false)}
-                                            className="block py-4 text-xl font-display font-semibold text-white border-b border-white/[0.06] active:text-primary transition-colors"
+                                            className="block py-4 text-lg font-display font-bold text-slate-900 border-b border-zinc-100 active:text-primary transition-colors"
                                         >
                                             {link.name}
                                         </Link>
@@ -136,15 +136,15 @@ export default function Navbar() {
                                 <Link
                                     href="/order"
                                     onClick={() => setMobileOpen(false)}
-                                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-white text-black font-semibold rounded-xl active:scale-[0.98] transition-transform"
+                                    className="flex items-center justify-center gap-1.5 w-full py-3 bg-slate-900 text-white font-semibold rounded-xl active:scale-[0.98] transition-transform text-sm shadow-sm"
                                 >
-                                    Get Your Card
-                                    <ArrowRight className="w-4 h-4" />
+                                    Get Card
+                                    <ArrowRight className="w-3.5 h-3.5" />
                                 </Link>
                                 <Link
                                     href="/login"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block w-full py-3.5 text-center text-zinc-400 font-medium border border-white/[0.08] rounded-xl active:bg-white/[0.04] transition-colors"
+                                    className="block w-full py-3 text-center text-zinc-550 font-semibold border border-zinc-200 rounded-xl active:bg-zinc-50 transition-colors text-sm"
                                 >
                                     Log in
                                 </Link>

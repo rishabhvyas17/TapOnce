@@ -1,6 +1,6 @@
 /**
  * @file Global Styles — TapOnce Design System
- * @description Minimalist, mobile-first design tokens and utilities
+ * @description Tech-minimalist, mobile-first design tokens and utilities
  */
 
 @tailwind base;
@@ -12,28 +12,28 @@
    ======================================== */
 @layer base {
   :root {
-    /* Surface colors — warm dark palette */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 95%;
+    /* Clean, high-tech light canvas */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 224 71% 4%; /* #020617 - Slate Deep Charcoal */
+    --card: 240 5% 98%; /* #F8F8F8 - Technical Off-White */
+    --card-foreground: 224 71% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
 
-    /* Brand — refined violet */
-    --primary: 263 70% 58%;
+    /* Brand — electric indigo */
+    --primary: 243 75% 59%; /* #4F46E5 */
     --primary-foreground: 0 0% 100%;
 
     /* Neutral surfaces */
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 95%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 224 71% 4%;
+    --muted: 240 5% 94%;
+    --muted-foreground: 240 4% 45%; /* #71717A - Zinc Muted Gray */
+    --accent: 240 5% 96%;
+    --accent-foreground: 224 71% 4%;
 
     /* Semantic */
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
@@ -41,9 +41,9 @@
     --warning-foreground: 0 0% 0%;
 
     /* Borders & inputs */
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 263 70% 58%;
+    --border: 240 6% 90%; /* #E4E4E7 - Clean border */
+    --input: 240 6% 90%;
+    --ring: 243 75% 59%;
     --radius: 0.75rem;
   }
 }
@@ -69,10 +69,10 @@
     overflow-x: hidden;
   }
 
-  /* Selection */
+  /* Selection - high-tech electric highlight */
   ::selection {
-    background: hsl(263 70% 58% / 0.3);
-    color: white;
+    background: hsl(243 75% 59% / 0.15);
+    color: hsl(243 75% 59%);
   }
 
   /* Focus — accessible but clean */
@@ -86,7 +86,7 @@
     outline: none;
   }
 
-  /* Smooth scrollbar */
+  /* Smooth light scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -97,12 +97,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 20%);
+    background: hsl(240 5% 85%);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 30%);
+    background: hsl(240 5% 75%);
   }
 }
 
@@ -126,15 +126,15 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Glass morphism */
+  /* High-Tech Glassmorphism */
   .glass {
-    background: hsl(0 0% 6% / 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .glass-subtle {
-    background: hsl(0 0% 6% / 0.4);
+    background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
@@ -154,7 +154,7 @@
 
   /* Gradient text */
   .text-gradient {
-    background: linear-gradient(135deg, hsl(263 70% 65%), hsl(200 80% 60%));
+    background: linear-gradient(135deg, hsl(243 75% 59%), hsl(220 80% 45%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -189,18 +189,13 @@
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.98); }
   to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
 }
 
 @keyframes pulse-subtle {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  50% { opacity: 0.7; }
 }
 
 .animate-fade-in {
@@ -217,18 +212,6 @@
 
 .animate-scale-in {
   animation: scale-in 0.4s ease-out forwards;
-}
-
-.animate-shimmer {
-  animation: shimmer 2s infinite;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    hsl(0 0% 100% / 0.05) 20%,
-    hsl(0 0% 100% / 0.1) 60%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
 }
 
 .animate-pulse-subtle {

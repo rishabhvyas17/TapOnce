@@ -9,17 +9,17 @@ const brands = [
 
 export default function TrustedBy() {
     return (
-        <section className="py-10 bg-background overflow-hidden border-y border-white/[0.04]">
-            <div className="max-w-6xl mx-auto px-4 mb-6 text-center">
-                <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        <section className="py-8 bg-zinc-50/50 overflow-hidden border-b border-zinc-150">
+            <div className="max-w-5xl mx-auto px-4 mb-4 text-center">
+                <p className="text-[10px] font-mono font-bold tracking-wider text-zinc-400 uppercase">
                     Trusted by modern professionals at
                 </p>
             </div>
 
-            <div className="flex relative items-center max-w-5xl mx-auto">
+            <div className="flex relative items-center max-w-4xl mx-auto">
                 {/* Gradient Masks */}
-                <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-                <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+                <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
                 {/* Marquee Container */}
                 <div className="flex w-full overflow-hidden">
@@ -28,7 +28,7 @@ export default function TrustedBy() {
                         animate={{ x: "-50%" }}
                         transition={{
                             ease: "linear",
-                            duration: 25,
+                            duration: 35,
                             repeat: Infinity,
                         }}
                     >
@@ -36,7 +36,7 @@ export default function TrustedBy() {
                         {[...brands, ...brands, ...brands].map((brand, i) => (
                             <div 
                                 key={i} 
-                                className="text-lg md:text-xl font-semibold text-zinc-600 hover:text-zinc-400 transition-colors cursor-default select-none tracking-tight"
+                                className="text-sm font-semibold text-zinc-400 hover:text-zinc-600 transition-colors cursor-default select-none tracking-tight"
                             >
                                 {brand}
                             </div>

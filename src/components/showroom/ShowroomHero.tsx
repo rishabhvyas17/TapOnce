@@ -10,12 +10,8 @@ export default function ShowroomHero() {
         <section className="relative min-h-[90vh] lg:min-h-screen w-full overflow-hidden bg-background text-white flex items-center justify-center pt-24 pb-16 lg:py-0">
             {/* Living Ambient Background */}
             <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-                <motion.div
-                    animate={{
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,rgba(168,85,247,0.05)_40%,transparent_75%)] blur-[80px]"
+                <div 
+                    className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(99,102,241,0.15)_0%,rgba(168,85,247,0.04)_50%,transparent_80%)]"
                 />
                 <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10 mix-blend-overlay" />
             </div>
@@ -112,7 +108,7 @@ export default function ShowroomHero() {
                         className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-none aspect-square flex items-center justify-center"
                     >
                         {/* Glow Behind the Image */}
-                        <div className="absolute w-[80%] h-[80%] rounded-full bg-primary/10 blur-[60px] -z-10 pointer-events-none" />
+                        <div className="absolute w-[80%] h-[80%] bg-[radial-gradient(circle,rgba(99,102,241,0.1)_0%,transparent_70%)] -z-10 pointer-events-none" />
 
                         {/* Image Container with Elegant Floating Motion */}
                         <motion.div

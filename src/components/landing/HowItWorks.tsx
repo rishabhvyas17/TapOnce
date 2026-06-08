@@ -53,7 +53,7 @@ export default function HowItWorks() {
         <section className="py-20 lg:py-28 bg-background relative overflow-hidden">
             {/* Ambient background glow */}
             <div className="absolute inset-0 pointer-events-none opacity-20">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(99,102,241,0.08)_0%,transparent_70%)]" />
             </div>
 
             <div className="container mx-auto px-4 relative z-10 max-w-5xl">

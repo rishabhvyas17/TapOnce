@@ -66,7 +66,7 @@ export default function ProductCollection() {
                             className="group relative flex flex-col justify-between rounded-2xl bg-zinc-900/30 border border-white/[0.05] p-6 lg:p-8 hover:border-white/[0.1] hover:bg-zinc-900/50 transition-all duration-300 overflow-hidden"
                         >
                             {/* Card Glow Effect */}
-                            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-primary/5 blur-[50px] pointer-events-none -z-10" />
+                            <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.04)_0%,transparent_70%)] pointer-events-none -z-10" />
 
                             <div>
                                 {/* Product Image Frame */}

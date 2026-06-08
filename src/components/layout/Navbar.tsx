@@ -38,10 +38,10 @@ export default function Navbar() {
                 <nav
                     aria-label="Main navigation"
                     className={`
-                        relative flex items-center justify-between w-full transition-all duration-500 ease-out
+                        relative flex items-center justify-between w-full max-w-5xl px-6 py-3.5 transition-all duration-300 ease-out rounded-full border
                         ${isScrolled
-                            ? 'max-w-2xl px-4 py-2.5 glass border border-white/[0.06] rounded-full shadow-lg shadow-black/20'
-                            : 'max-w-5xl px-2 py-3 bg-transparent'
+                            ? 'glass border-white/[0.06] shadow-lg shadow-black/20'
+                            : 'bg-transparent border-transparent'
                         }
                     `}
                 >

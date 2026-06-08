@@ -39,7 +39,7 @@ export default function Footer() {
         <footer className="relative bg-background text-white pt-20 pb-10 overflow-hidden border-t border-white/[0.04]">
             {/* Soft Ambient Glow */}
             <div className="absolute inset-0 pointer-events-none opacity-10">
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(99,102,241,0.1)_0%,transparent_75%)] translate-y-1/2 -translate-x-1/4" />
             </div>
 
             <div className="container relative z-10 px-4 md:px-6 mx-auto max-w-5xl">

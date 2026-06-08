@@ -16,7 +16,7 @@ export default function FinalCTA() {
         <section className="py-20 lg:py-28 bg-background relative overflow-hidden border-t border-white/[0.04]">
             {/* Ambient glow behind */}
             <div className="absolute inset-0 pointer-events-none opacity-20">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-primary/15 rounded-full blur-[130px]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-[radial-gradient(ellipse,rgba(99,102,241,0.1)_0%,transparent_70%)]" />
             </div>
 
             <div className="container mx-auto px-4 relative z-10 max-w-5xl">

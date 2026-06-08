@@ -19,7 +19,7 @@ export type CardTemplate = {
     // Layout
     layout: "classic" | "minimal" | "bold" | "centered" | "split"
     // Material compatibility
-    materials: ("metal" | "pvc" | "wood")[]
+    materials: ("metal" | "pvc")[]
     // Popularity
     popular: boolean
 }
@@ -42,7 +42,7 @@ export const legalTemplates: CardTemplate[] = [
         icon: "Scale",
         iconPosition: "top-right",
         layout: "classic",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: true
     },
     {
@@ -76,7 +76,7 @@ export const legalTemplates: CardTemplate[] = [
         icon: "Building2",
         iconPosition: "watermark",
         layout: "minimal",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: false
     },
     {
@@ -93,7 +93,7 @@ export const legalTemplates: CardTemplate[] = [
         icon: "ScrollText",
         iconPosition: "top-left",
         layout: "classic",
-        materials: ["wood", "pvc"],
+        materials: ["pvc"],
         popular: false
     },
     {
@@ -133,7 +133,7 @@ export const healthcareTemplates: CardTemplate[] = [
         icon: "Stethoscope",
         iconPosition: "top-right",
         layout: "classic",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: true
     },
     {
@@ -167,7 +167,7 @@ export const healthcareTemplates: CardTemplate[] = [
         icon: "Cross",
         iconPosition: "top-left",
         layout: "minimal",
-        materials: ["pvc", "wood"],
+        materials: ["pvc"],
         popular: false
     },
     {
@@ -201,7 +201,7 @@ export const healthcareTemplates: CardTemplate[] = [
         icon: "Smile",
         iconPosition: "top-right",
         layout: "classic",
-        materials: ["pvc", "wood"],
+        materials: ["pvc"],
         popular: false
     }
 ]
@@ -258,7 +258,7 @@ export const corporateTemplates: CardTemplate[] = [
         icon: "Rocket",
         iconPosition: "top-right",
         layout: "bold",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: false
     },
     {
@@ -292,7 +292,7 @@ export const corporateTemplates: CardTemplate[] = [
         icon: "Briefcase",
         iconPosition: "top-right",
         layout: "minimal",
-        materials: ["pvc", "wood"],
+        materials: ["pvc"],
         popular: false
     }
 ]
@@ -315,7 +315,7 @@ export const creativeTemplates: CardTemplate[] = [
         icon: "Palette",
         iconPosition: "watermark",
         layout: "bold",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: true
     },
     {
@@ -332,7 +332,7 @@ export const creativeTemplates: CardTemplate[] = [
         icon: "Pencil",
         iconPosition: "top-left",
         layout: "minimal",
-        materials: ["pvc", "wood"],
+        materials: ["pvc"],
         popular: false
     },
     {
@@ -383,7 +383,7 @@ export const creativeTemplates: CardTemplate[] = [
         icon: "Film",
         iconPosition: "top-right",
         layout: "classic",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: false
     }
 ]
@@ -423,7 +423,7 @@ export const realEstateTemplates: CardTemplate[] = [
         icon: "Building",
         iconPosition: "watermark",
         layout: "minimal",
-        materials: ["metal", "pvc", "wood"],
+        materials: ["metal", "pvc"],
         popular: true
     },
     {
@@ -440,7 +440,7 @@ export const realEstateTemplates: CardTemplate[] = [
         icon: "Key",
         iconPosition: "top-left",
         layout: "classic",
-        materials: ["metal", "wood"],
+        materials: ["metal"],
         popular: false
     },
     {
@@ -474,7 +474,7 @@ export const realEstateTemplates: CardTemplate[] = [
         icon: "TreePine",
         iconPosition: "watermark",
         layout: "minimal",
-        materials: ["wood", "pvc"],
+        materials: ["pvc"],
         popular: false
     }
 ]
@@ -531,7 +531,7 @@ export const influencerTemplates: CardTemplate[] = [
         icon: "Sparkles",
         iconPosition: "top-left",
         layout: "classic",
-        materials: ["metal", "wood"],
+        materials: ["metal"],
         popular: false
     },
     {

@@ -5,36 +5,27 @@ import { Check } from "lucide-react"
 import React from "react"
 
 interface MaterialSelectorProps {
-    selected: "metal" | "pvc" | "wood"
-    onSelect: (material: "metal" | "pvc" | "wood") => void
+    selected: "metal" | "pvc"
+    onSelect: (material: "metal" | "pvc") => void
 }
 
 const materials = [
     {
         id: "metal" as const,
         name: "Matte Black Metal",
-        price: "₹1,499",
-        description: "Premium stainless steel with laser engraving. Heavy, durable, unforgettable.",
-        features: ["Stainless Steel", "Laser Engraved", "Lifetime Warranty"],
+        price: "₹1,500",
+        description: "Premium laser-engraved stainless steel. Heavy, durable, and highly prestigious.",
+        features: ["15g Stainless Steel Core", "Laser-Etched Engraving", "Lifetime Chip Warranty"],
         gradient: "from-zinc-800 to-black",
         popular: true
     },
     {
         id: "pvc" as const,
         name: "Premium PVC",
-        price: "₹699",
-        description: "Full color printing edge-to-edge. Lightweight, cost-effective, professional.",
-        features: ["Full Color Print", "Glossy or Matte", "Bulk Discounts"],
-        gradient: "from-blue-900 to-indigo-900",
-        popular: false
-    },
-    {
-        id: "wood" as const,
-        name: "Eco Walnut",
-        price: "₹999",
-        description: "Real walnut wood with embedded NFC. Sustainable, unique grain, statement piece.",
-        features: ["Real Wood", "FSC Certified", "Unique Grain"],
-        gradient: "from-amber-800 to-yellow-900",
+        price: "₹1,000",
+        description: "High-fidelity color printing on recycled PVC. Clean, flexible, and vibrant.",
+        features: ["Edge-to-Edge Color Print", "Eco-Friendly Recycled PVC", "Matte Finish Options"],
+        gradient: "from-zinc-900 to-zinc-950",
         popular: false
     }
 ]
@@ -42,47 +33,47 @@ const materials = [
 export default function MaterialSelector({ selected, onSelect }: MaterialSelectorProps) {
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white">Choose Your Material</h3>
+            <h3 className="text-base font-bold text-white tracking-tight">Choose Material</h3>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
                 {materials.map((material) => (
                     <motion.button
                         key={material.id}
+                        type="button"
                         onClick={() => onSelect(material.id)}
-                        whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`relative p-6 rounded-2xl border text-left transition-all ${selected === material.id
-                                ? "bg-white/10 border-violet-500 ring-2 ring-violet-500/50"
-                                : "bg-zinc-900/50 border-white/10 hover:border-white/20"
+                        className={`relative p-5 rounded-xl border text-left transition-all overflow-hidden ${selected === material.id
+                                ? "bg-white/[0.04] border-primary"
+                                : "bg-zinc-900/30 border-white/[0.06] hover:border-white/[0.1] hover:bg-zinc-900/50"
                             }`}
                     >
                         {/* Popular Badge */}
                         {material.popular && (
-                            <div className="absolute -top-3 left-4 px-3 py-1 bg-violet-500 text-white text-xs font-bold rounded-full">
-                                MOST POPULAR
+                            <div className="absolute top-0 right-0 px-2.5 py-0.5 bg-primary text-black text-[9px] font-bold tracking-wider uppercase rounded-bl-lg select-none">
+                                Premium
                             </div>
                         )}
 
-                        {/* Selected Check */}
+                        {/* Selected Indicator */}
                         {selected === material.id && (
-                            <div className="absolute top-4 right-4 h-6 w-6 bg-violet-500 rounded-full flex items-center justify-center">
-                                <Check className="h-4 w-4 text-white" />
+                            <div className="absolute bottom-4 right-4 h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                                <Check className="h-3 w-3 text-black" strokeWidth={3} />
                             </div>
                         )}
 
-                        {/* Material Preview */}
-                        <div className={`h-16 w-full rounded-lg bg-gradient-to-br ${material.gradient} mb-4 relative overflow-hidden`}>
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30" />
+                        {/* Texture Gradient preview */}
+                        <div className={`h-12 w-full rounded-lg bg-gradient-to-br ${material.gradient} mb-3.5 relative overflow-hidden border border-white/[0.05]`}>
+                            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20" />
                         </div>
 
-                        <h4 className="text-lg font-bold text-white mb-1">{material.name}</h4>
-                        <p className="text-2xl font-black text-violet-400 mb-3">{material.price}</p>
-                        <p className="text-sm text-zinc-400 mb-4">{material.description}</p>
+                        <h4 className="text-base font-bold text-white mb-0.5 tracking-tight">{material.name}</h4>
+                        <p className="text-xl font-bold text-primary mb-2 tracking-tight">{material.price}</p>
+                        <p className="text-xs text-zinc-400 mb-4 leading-normal font-normal">{material.description}</p>
 
                         <ul className="space-y-1">
                             {material.features.map((feature) => (
-                                <li key={feature} className="flex items-center gap-2 text-xs text-zinc-500">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+                                <li key={feature} className="flex items-center gap-2 text-[10px] text-zinc-500 font-normal">
+                                    <div className="h-1 w-1 rounded-full bg-primary" />
                                     {feature}
                                 </li>
                             ))}

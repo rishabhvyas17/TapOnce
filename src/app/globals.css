@@ -1,6 +1,6 @@
 /**
- * @file Global Styles — TapOnce Design System
- * @description Tech-minimalist, mobile-first design tokens and utilities
+ * @file Global Styles — TapOnce Premium Design System
+ * @description Professional, conversion-focused design tokens
  */
 
 @tailwind base;
@@ -8,42 +8,41 @@
 @tailwind utilities;
 
 /* ========================================
-   DESIGN TOKENS
+   DESIGN TOKENS — Premium Palette
    ======================================== */
 @layer base {
   :root {
-    /* Clean, high-tech light canvas */
-    --background: 0 0% 100%; /* #FFFFFF */
-    --foreground: 224 71% 4%; /* #020617 - Slate Deep Charcoal */
-    --card: 240 5% 98%; /* #F8F8F8 - Technical Off-White */
-    --card-foreground: 224 71% 4%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
+    /* Premium dark + gold palette */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
 
-    /* Brand — electric indigo */
-    --primary: 243 75% 59%; /* #4F46E5 */
+    --card: 0 0% 97%;
+    --card-foreground: 0 0% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
+
+    /* Brand — warm gold accent */
+    --primary: 38 45% 58%;       /* #C8A35F - warm gold */
     --primary-foreground: 0 0% 100%;
 
-    /* Neutral surfaces */
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 224 71% 4%;
-    --muted: 240 5% 94%;
-    --muted-foreground: 240 4% 45%; /* #71717A - Zinc Muted Gray */
-    --accent: 240 5% 96%;
-    --accent-foreground: 224 71% 4%;
+    /* Surfaces */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 4%;
 
     /* Semantic */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 76% 36%;
+    --success: 152 69% 31%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 0%;
 
     /* Borders & inputs */
-    --border: 240 6% 90%; /* #E4E4E7 - Clean border */
-    --input: 240 6% 90%;
-    --ring: 243 75% 59%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 38 45% 58%;
     --radius: 0.75rem;
   }
 }
@@ -69,24 +68,23 @@
     overflow-x: hidden;
   }
 
-  /* Selection - high-tech electric highlight */
+  /* Selection — gold highlight */
   ::selection {
-    background: hsl(243 75% 59% / 0.15);
-    color: hsl(243 75% 59%);
+    background: hsl(38 45% 58% / 0.18);
+    color: hsl(38 45% 40%);
   }
 
-  /* Focus — accessible but clean */
+  /* Focus — accessible */
   :focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
 
-  /* Remove focus ring for mouse users */
   :focus:not(:focus-visible) {
     outline: none;
   }
 
-  /* Smooth light scrollbar */
+  /* Clean scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -97,12 +95,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(240 5% 85%);
+    background: hsl(0 0% 80%);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(240 5% 75%);
+    background: hsl(0 0% 65%);
   }
 }
 
@@ -110,7 +108,6 @@
    UTILITY CLASSES
    ======================================== */
 @layer utilities {
-  /* Hide scrollbar */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -119,24 +116,23 @@
     display: none;
   }
 
-  /* Text rendering */
   .text-optimized {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
-  /* High-Tech Glassmorphism */
+  /* Premium Glass */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 
-  .glass-subtle {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  .glass-dark {
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 
   /* 3D utilities */
@@ -152,21 +148,26 @@
     backface-visibility: hidden;
   }
 
-  /* Gradient text */
-  .text-gradient {
-    background: linear-gradient(135deg, hsl(243 75% 59%), hsl(220 80% 45%));
+  /* Gold gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #C8A35F 0%, #E8D5A3 50%, #C8A35F 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Safe area padding for mobile */
+  /* Safe area padding */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .pt-safe {
     padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Section spacing */
+  .section-padding {
+    @apply py-20 lg:py-28;
   }
 }
 
@@ -179,7 +180,7 @@
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -189,21 +190,41 @@
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.98); }
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes tap-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(200, 163, 95, 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(200, 163, 95, 0); }
+}
+
+@keyframes portfolio-reveal {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
+  animation: fade-in 0.6s ease-out forwards;
 }
 
 .animate-slide-up {
-  animation: slide-up 0.5s ease-out forwards;
+  animation: slide-up 0.6s ease-out forwards;
 }
 
 .animate-slide-down {
@@ -211,14 +232,23 @@
 }
 
 .animate-scale-in {
-  animation: scale-in 0.4s ease-out forwards;
+  animation: scale-in 0.5s ease-out forwards;
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 2s ease-in-out infinite;
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
-/* Staggered children animations */
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+.animate-tap-pulse {
+  animation: tap-pulse 2.5s ease-in-out infinite;
+}
+
+/* Staggered children */
 .stagger-children > * {
   opacity: 0;
   animation: slide-up 0.5s ease-out forwards;

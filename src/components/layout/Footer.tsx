@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { Instagram, Twitter, Linkedin, Mail, Check, Loader2, Cpu } from "lucide-react"
+import { Instagram, Twitter, Linkedin, Mail, Check, Loader2, Phone } from "lucide-react"
 
 export default function Footer() {
     const [email, setEmail] = useState("")
@@ -36,127 +36,150 @@ export default function Footer() {
     }
 
     return (
-        <footer className="relative bg-white text-slate-900 pt-16 pb-10 overflow-hidden border-t border-zinc-150">
-            {/* Ambient Technical Background Grid */}
-            <div className="absolute inset-0 z-0 bg-[url('/grid.svg')] opacity-[0.015] pointer-events-none" />
-
-            <div className="container relative z-10 px-4 md:px-6 mx-auto max-w-5xl">
+        <footer className="relative bg-[#0A0A0A] text-white pt-16 pb-8 overflow-hidden">
+            <div className="container relative z-10 px-4 md:px-6 mx-auto max-w-6xl">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12">
                     {/* Brand Column */}
-                    <div className="md:col-span-5 space-y-4">
-                        <Link href="/" className="inline-block flex items-center gap-2 group">
-                            <div className="h-6.5 w-6.5 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-                                <Cpu className="h-4 w-4 text-white animate-pulse" />
-                            </div>
-                            <span className="font-display font-bold text-sm tracking-tight text-slate-900">
-                                Tap<span className="text-primary">Once</span>
+                    <div className="md:col-span-4 space-y-4">
+                        <Link href="/" className="inline-block">
+                            <span className="font-display font-bold text-lg tracking-tight text-white">
+                                Tap<span className="text-gold-400">Once</span>
                             </span>
                         </Link>
-                        <p className="text-zinc-500 text-xs leading-relaxed max-w-xs font-normal">
-                            The last business card you'll ever need. Share your professional profile instantly with a single tap.
+                        <p className="text-neutral-500 text-sm leading-relaxed max-w-xs">
+                            India&apos;s premium NFC smart business cards. Share your professional portfolio, 
+                            contact, and social media with a single tap.
                         </p>
                         <div className="flex gap-2.5 pt-1">
                             {[
-                                { Icon: Instagram, href: "https://instagram.com/taponce" },
-                                { Icon: Twitter, href: "https://twitter.com/taponce" },
-                                { Icon: Linkedin, href: "https://linkedin.com/company/taponce" }
-                            ].map(({ Icon, href }, i) => (
+                                { Icon: Instagram, href: "https://instagram.com/taponce", label: "Instagram" },
+                                { Icon: Twitter, href: "https://twitter.com/taponce", label: "Twitter" },
+                                { Icon: Linkedin, href: "https://linkedin.com/company/taponce", label: "LinkedIn" },
+                            ].map(({ Icon, href, label }, i) => (
                                 <a
                                     key={i}
                                     href={href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-7 w-7 flex items-center justify-center rounded-lg bg-zinc-50 border border-zinc-200/80 hover:bg-zinc-100 hover:text-primary transition-colors text-zinc-400"
+                                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08] hover:bg-white/10 hover:text-gold-400 transition-colors text-neutral-500"
+                                    aria-label={label}
                                 >
-                                    <Icon size={12} />
+                                    <Icon size={14} />
                                 </a>
                             ))}
                         </div>
                     </div>
 
-                    {/* Links Columns */}
-                    <div className="md:col-span-3 space-y-3">
-                        <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">[NAVIGATION]</h4>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/order" className="text-zinc-500 hover:text-slate-900 transition-colors text-xs font-semibold">
-                                    Get Custom Card
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/order/track" className="text-zinc-500 hover:text-slate-900 transition-colors text-xs font-semibold">
-                                    Track Your Order
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/#collection" className="text-zinc-500 hover:text-slate-900 transition-colors text-xs font-semibold">
-                                    Materials & Pricing
-                                </Link>
-                            </li>
+                    {/* Navigation */}
+                    <div className="md:col-span-2 space-y-4">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Product</h4>
+                        <ul className="space-y-2.5">
+                            {[
+                                { name: "Order Card", href: "/order" },
+                                { name: "How It Works", href: "/#how-it-works" },
+                                { name: "Use Cases", href: "/#professions" },
+                                { name: "Track Order", href: "/order/track" },
+                            ].map((link, i) => (
+                                <li key={i}>
+                                    <Link href={link.href} className="text-neutral-400 hover:text-white transition-colors text-sm">
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
-                    {/* Newsletter Subscription Column */}
-                    <div className="md:col-span-4 space-y-3">
-                        <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400">[NEWSLETTER]</h4>
-                        <p className="text-zinc-500 text-xs leading-relaxed font-normal">
-                            Subscribe to get notified about new templates and material drops.
-                        </p>
+                    {/* Company */}
+                    <div className="md:col-span-2 space-y-4">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Company</h4>
+                        <ul className="space-y-2.5">
+                            {[
+                                { name: "Products & Pricing", href: "/#products" },
+                                { name: "FAQ", href: "/#faq" },
+                                { name: "Privacy Policy", href: "/privacy" },
+                                { name: "Terms of Service", href: "/terms" },
+                            ].map((link, i) => (
+                                <li key={i}>
+                                    <Link href={link.href} className="text-neutral-400 hover:text-white transition-colors text-sm">
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-                        <form onSubmit={handleSubscribe} className="space-y-1.5">
-                            <div className="flex gap-2">
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value)
-                                        if (status === "error") setStatus("idle")
-                                    }}
-                                    placeholder="Enter your email"
-                                    className="flex-1 min-w-0 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-primary focus:bg-white transition-all font-medium"
-                                    disabled={status === "loading" || status === "success"}
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={status === "loading" || status === "success"}
-                                    className="flex items-center justify-center px-4 py-2 bg-slate-900 text-white font-semibold rounded-xl text-xs hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-                                >
-                                    {status === "loading" ? (
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                    ) : status === "success" ? (
-                                        <Check className="w-3.5 h-3.5 text-emerald-500" />
-                                    ) : (
-                                        "Subscribe"
-                                    )}
-                                </button>
-                            </div>
-                            
-                            {status === "success" && (
-                                <p className="text-[10px] text-emerald-600 font-semibold pt-0.5">
-                                    Subscribed successfully!
-                                </p>
-                            )}
-                            
-                            {status === "error" && (
-                                <p className="text-[10px] text-rose-500 font-semibold pt-0.5">
-                                    {errorMessage}
-                                </p>
-                            )}
-                        </form>
+                    {/* Newsletter + Contact */}
+                    <div className="md:col-span-4 space-y-5">
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Stay Updated</h4>
+                            <p className="text-neutral-500 text-sm leading-relaxed">
+                                Get notified about new card designs, features, and exclusive offers.
+                            </p>
+
+                            <form onSubmit={handleSubscribe} className="space-y-2">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => {
+                                            setEmail(e.target.value)
+                                            if (status === "error") setStatus("idle")
+                                        }}
+                                        placeholder="Enter your email"
+                                        className="flex-1 min-w-0 bg-white/[0.06] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-gold-400/50 transition-all"
+                                        disabled={status === "loading" || status === "success"}
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={status === "loading" || status === "success"}
+                                        className="flex items-center justify-center px-5 py-2.5 bg-gold-400 text-neutral-900 font-semibold rounded-xl text-sm hover:bg-gold-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                                    >
+                                        {status === "loading" ? (
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        ) : status === "success" ? (
+                                            <Check className="w-4 h-4" />
+                                        ) : (
+                                            "Subscribe"
+                                        )}
+                                    </button>
+                                </div>
+
+                                {status === "success" && (
+                                    <p className="text-xs text-emerald-400 font-medium">
+                                        Subscribed successfully!
+                                    </p>
+                                )}
+
+                                {status === "error" && (
+                                    <p className="text-xs text-rose-400 font-medium">
+                                        {errorMessage}
+                                    </p>
+                                )}
+                            </form>
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="space-y-2 pt-2">
+                            <a href="mailto:hello@taponce.in" className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors">
+                                <Mail size={14} />
+                                hello@taponce.in
+                            </a>
+                            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors">
+                                <Phone size={14} />
+                                WhatsApp Support
+                            </a>
+                        </div>
                     </div>
                 </div>
 
                 {/* Footer Bottom */}
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-zinc-150 text-[10px] text-zinc-400 font-semibold tracking-wide">
-                    <p>&copy; {new Date().getFullYear()} TAPONCE. ALL RIGHTS RESERVED.</p>
-                    <div className="flex gap-5 font-mono uppercase">
-                        <Link href="/privacy" className="hover:text-slate-900 transition-colors">Privacy</Link>
-                        <Link href="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
-                        <a href="mailto:hello@taponce.in" className="flex items-center gap-1 hover:text-slate-900 transition-colors font-sans lowercase">
-                            <Mail size={11} />
-                            hello@taponce.in
-                        </a>
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-white/[0.06] text-xs text-neutral-600">
+                    <p>&copy; {new Date().getFullYear()} TapOnce. All rights reserved.</p>
+                    <div className="flex gap-5">
+                        <Link href="/privacy" className="hover:text-neutral-400 transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-neutral-400 transition-colors">Terms</Link>
+                        <Link href="/refund" className="hover:text-neutral-400 transition-colors">Refund Policy</Link>
                     </div>
                 </div>
             </div>

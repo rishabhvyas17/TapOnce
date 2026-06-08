@@ -1,6 +1,6 @@
 /**
  * @file Tailwind CSS Configuration
- * @description TapOnce design system — minimal, mobile-first
+ * @description TapOnce premium design system — professional, conversion-focused
  */
 
 import type { Config } from 'tailwindcss'
@@ -66,16 +66,29 @@ const config: Config = {
                     DEFAULT: 'hsl(var(--success))',
                     foreground: 'hsl(var(--success-foreground))',
                 },
+                gold: {
+                    50: '#FBF7EE',
+                    100: '#F5ECDA',
+                    200: '#E8D5A3',
+                    300: '#DBBF6C',
+                    400: '#C8A35F',
+                    500: '#B08D3B',
+                    600: '#96732E',
+                    700: '#7A5A26',
+                    800: '#654926',
+                    900: '#553D24',
+                },
             },
             fontFamily: {
-                sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                display: ['var(--font-display)', 'Inter', 'system-ui', 'sans-serif'],
+                sans: ['var(--font-dm-sans)', 'system-ui', '-apple-system', 'sans-serif'],
+                display: ['var(--font-outfit)', 'var(--font-dm-sans)', 'system-ui', 'sans-serif'],
             },
             fontSize: {
-                'display-xl': ['4rem', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '800' }],
-                'display-lg': ['3rem', { lineHeight: '1.05', letterSpacing: '-0.025em', fontWeight: '700' }],
-                'display-md': ['2.25rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
-                'display-sm': ['1.875rem', { lineHeight: '1.15', letterSpacing: '-0.015em', fontWeight: '600' }],
+                'display-2xl': ['5rem', { lineHeight: '1', letterSpacing: '-0.035em', fontWeight: '700' }],
+                'display-xl': ['4rem', { lineHeight: '1.05', letterSpacing: '-0.03em', fontWeight: '700' }],
+                'display-lg': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.025em', fontWeight: '700' }],
+                'display-md': ['2.25rem', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '600' }],
+                'display-sm': ['1.875rem', { lineHeight: '1.2', letterSpacing: '-0.015em', fontWeight: '600' }],
             },
             borderRadius: {
                 lg: 'var(--radius)',

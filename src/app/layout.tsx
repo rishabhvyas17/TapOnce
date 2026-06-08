@@ -1,58 +1,94 @@
 /**
  * @file Root Layout
- * @description Root layout — fonts, SEO, providers
+ * @description Root layout — premium fonts, comprehensive SEO, structured data
  */
 
 import type { Metadata, Viewport } from 'next'
-import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
+import { Outfit, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 
-const inter = Inter({
+const outfit = Outfit({
     subsets: ['latin'],
-    variable: '--font-inter',
+    variable: '--font-outfit',
     display: 'swap',
+    weight: ['400', '500', '600', '700'],
 })
 
-const display = Plus_Jakarta_Sans({
+const dmSans = DM_Sans({
     subsets: ['latin'],
-    variable: '--font-display',
+    variable: '--font-dm-sans',
     display: 'swap',
-    weight: ['500', '600', '700', '800'],
+    weight: ['400', '500', '600', '700'],
 })
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://taponce.in'
 
 export const metadata: Metadata = {
     title: {
-        default: 'TapOnce — Premium NFC Business Cards | Share With a Tap',
+        default: 'TapOnce — Premium NFC Business Cards India | Digital Visiting Card',
         template: '%s | TapOnce',
     },
     description:
-        'India\'s premium NFC smart business cards. Share your professional profile, socials & contact with a single tap. No app needed. Metal & PVC cards starting ₹1000.',
+        'India\'s #1 premium NFC smart business card. One tap shares your portfolio, contact, social media & appointment booking. Metal & PVC cards from ₹1,000. Free shipping. No app needed. Used by 10,000+ doctors, lawyers, architects & founders.',
     keywords: [
         'NFC business card',
+        'NFC business card India',
         'digital business card India',
-        'smart card',
-        'NFC card',
-        'professional networking card',
+        'smart visiting card',
+        'NFC card price India',
+        'digital visiting card',
         'contactless business card',
-        'metal business card',
+        'NFC card for doctors',
+        'NFC card for lawyers',
+        'NFC card for real estate agents',
+        'NFC card for architects',
+        'NFC card for freelancers',
+        'metal business card India',
+        'premium business card',
+        'tap card India',
+        'smart card India',
+        'business card online India',
+        'NFC visiting card',
+        'digital card for professionals',
+        'eco-friendly business card',
+        'reusable business card',
+        'smart networking card',
+        'QR business card India',
+        'buy NFC card online',
+        'best digital business card India',
+        'NFC card with COD',
+        'metal visiting card',
+        'NFC card for startups',
+        'NFC card for sales teams',
+        'digital portfolio card',
+        'NFC card free shipping',
+        'NFC card Mumbai',
+        'NFC card Delhi',
+        'NFC card Bangalore',
         'TapOnce',
-        'tap card',
+        'tap once card',
+        'smart NFC card for business',
     ],
     authors: [{ name: 'TapOnce' }],
     creator: 'TapOnce',
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+    publisher: 'TapOnce',
+    metadataBase: new URL(BASE_URL),
+    alternates: {
+        canonical: '/',
+    },
     openGraph: {
         type: 'website',
         locale: 'en_IN',
         siteName: 'TapOnce',
-        title: 'TapOnce — Premium NFC Business Cards',
-        description: 'Share your professional profile with a single tap. Premium metal & PVC NFC cards for modern professionals.',
+        title: 'TapOnce — Premium NFC Business Cards | One Tap. Every Connection.',
+        description: 'India\'s premium NFC smart business cards. Share your portfolio, contact & social media with a single tap. Metal & PVC cards from ₹1,000. Free shipping.',
+        url: BASE_URL,
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'TapOnce — Premium NFC Business Cards',
-        description: 'Share your professional profile with a single tap.',
+        title: 'TapOnce — Premium NFC Business Cards India',
+        description: 'One tap shares your portfolio, contact & socials. Metal & PVC cards from ₹1,000. Free shipping India-wide.',
     },
     icons: {
         icon: '/favicon.ico',
@@ -72,7 +108,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-    themeColor: '#FFFFFF',
+    themeColor: '#0A0A0A',
     width: 'device-width',
     initialScale: 1,
     maximumScale: 5,
@@ -87,6 +123,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning className="light">
             <head>
+                {/* Organization Schema */}
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
@@ -94,18 +131,110 @@ export default function RootLayout({
                             '@context': 'https://schema.org',
                             '@type': 'Organization',
                             name: 'TapOnce',
-                            url: process.env.NEXT_PUBLIC_APP_URL || 'https://taponce.in',
-                            description: 'Premium NFC smart business cards for modern professionals',
+                            url: BASE_URL,
+                            logo: `${BASE_URL}/images/logo.png`,
+                            description: 'India\'s premium NFC smart business cards for modern professionals. Share your portfolio, contact and social media with a single tap.',
+                            sameAs: [
+                                'https://instagram.com/taponce',
+                                'https://twitter.com/taponce',
+                                'https://linkedin.com/company/taponce',
+                            ],
                             contactPoint: {
                                 '@type': 'ContactPoint',
                                 contactType: 'customer service',
-                                email: 'support@taponce.in',
+                                email: 'hello@taponce.in',
+                                availableLanguage: ['English', 'Hindi'],
+                            },
+                            address: {
+                                '@type': 'PostalAddress',
+                                addressCountry: 'IN',
                             },
                         }),
                     }}
                 />
+                {/* WebSite Schema with SearchAction */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'WebSite',
+                            name: 'TapOnce',
+                            url: BASE_URL,
+                            potentialAction: {
+                                '@type': 'SearchAction',
+                                target: `${BASE_URL}/search?q={search_term_string}`,
+                                'query-input': 'required name=search_term_string',
+                            },
+                        }),
+                    }}
+                />
+                {/* Product Schema — Metal Card */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'Product',
+                            name: 'TapOnce Premium Metal NFC Business Card',
+                            description: 'Laser-engraved matte black stainless steel NFC business card. One tap shares your digital portfolio, contact, and social media.',
+                            brand: { '@type': 'Brand', name: 'TapOnce' },
+                            offers: {
+                                '@type': 'Offer',
+                                price: '1500',
+                                priceCurrency: 'INR',
+                                availability: 'https://schema.org/InStock',
+                                url: `${BASE_URL}/order`,
+                                shippingDetails: {
+                                    '@type': 'OfferShippingDetails',
+                                    shippingRate: {
+                                        '@type': 'MonetaryAmount',
+                                        value: '0',
+                                        currency: 'INR',
+                                    },
+                                    deliveryTime: {
+                                        '@type': 'ShippingDeliveryTime',
+                                        businessDays: {
+                                            '@type': 'QuantitativeValue',
+                                            minValue: 3,
+                                            maxValue: 5,
+                                        },
+                                    },
+                                    shippingDestination: {
+                                        '@type': 'DefinedRegion',
+                                        addressCountry: 'IN',
+                                    },
+                                },
+                            },
+                            aggregateRating: {
+                                '@type': 'AggregateRating',
+                                ratingValue: '4.9',
+                                reviewCount: '500',
+                                bestRating: '5',
+                            },
+                        }),
+                    }}
+                />
+                {/* BreadcrumbList Schema */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'BreadcrumbList',
+                            itemListElement: [
+                                {
+                                    '@type': 'ListItem',
+                                    position: 1,
+                                    name: 'Home',
+                                    item: BASE_URL,
+                                },
+                            ],
+                        }),
+                    }}
+                />
             </head>
-            <body className={`${inter.variable} ${display.variable} font-sans`}>
+            <body className={`${outfit.variable} ${dmSans.variable} font-sans`}>
                 <Providers>{children}</Providers>
             </body>
         </html>

@@ -20,26 +20,16 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 async function test() {
     try {
-        const { data: cardDesigns, error } = await supabase
-            .from('card_designs')
+        const { data: latestOrders, error: ordersError } = await supabase
+            .from('orders')
             .select('*')
-            .limit(5)
+            .order('order_number', { ascending: false })
+            .limit(1)
         
-        if (error) {
-            console.error('Error fetching card designs:', error)
+        if (ordersError) {
+            console.error('Error fetching orders:', ordersError)
         } else {
-            console.log('Successfully fetched card designs:', cardDesigns)
-        }
-
-        const { data: profiles, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .limit(5)
-
-        if (profileError) {
-            console.error('Error fetching profiles:', profileError)
-        } else {
-            console.log('Successfully fetched profiles:', profiles)
+            console.log('Successfully fetched latest order:', latestOrders)
         }
     } catch (e) {
         console.error('Unexpected error:', e)

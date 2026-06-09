@@ -1,12 +1,16 @@
-/**
- * @file Create Test Users Script
- * @description Creates test accounts for Admin, Agent, and Customer roles
- * 
- * Usage: npx tsx scripts/create-test-users.ts
- */
+import * as dotenv from 'dotenv'
+import * as path from 'path'
 
-const SUPABASE_URL = 'https://xuzdqjjvysngyereykqk.supabase.co'
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1emRxamp2eXNuZ3llcmV5a3FrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2ODY2MzQyMywiZXhwIjoyMDg0MjM5NDIzfQ.F5grmyq62pDy1shKPFcgTJG_rZbN5cB6QxFgxCmeMOs'
+// Load environment variables from .env.local
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    console.error('❌ Missing environment variables in .env.local')
+    process.exit(1)
+}
 
 interface TestUser {
     email: string
